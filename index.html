@@ -81,7 +81,7 @@
   </header>
   <div class="hint" id="hint"></div>
   <div id="main">
-    <div id="map"><div id="tankBar"></div></div>
+    <div id="map"><div id="ageCounter"></div><div id="tankBar"></div></div>
     <aside id="side">
       <div class="legend" id="legend">
         <button class="chip" data-cat="visited"></button>
@@ -94,8 +94,8 @@
         <button class="chip" data-cat="🌠"></button>
         <button class="chip" data-cat="🔭"></button>
       </div>
-      <div class="secthead" style="display:none"><span id="pplHead"></span><button class="mini" id="peopleAll"></button><button class="mini" id="peopleToggle"></button></div>
-      <div class="legend" id="people" style="display:none"></div>
+      <div class="secthead"><span id="pplHead"></span><button class="mini" id="peopleAll"></button><button class="mini" id="peopleToggle"></button></div>
+      <div class="legend" id="people"></div>
       <div id="sideHead"></div>
       <div id="list"></div>
     </aside>
@@ -131,10 +131,10 @@ const seed=[
  {id:'de',name:'Germany (details later)',cn:'德国（城市待补）',flag:'🇩🇪',lat:51.10,lng:10.40,status:'visited',geo:'Germany',cities:[]},
  {id:'be',name:'Belgium (details later)',cn:'比利时（城市待补）',flag:'🇧🇪',lat:50.64,lng:4.67,status:'visited',geo:'Belgium',cities:[]},
  {id:'cn',name:'China',cn:'中国',flag:'🇨🇳',lat:35.00,lng:103.00,status:'visited',geo:'China',cities:[]},
- {id:'jp',name:'Japan',cn:'日本',flag:'🇯🇵',lat:36.20,lng:138.25,status:'visited',date:'2025',geo:'Japan',cities:[]},
+ {id:'jp',name:'Japan',cn:'日本',flag:'🇯🇵',lat:36.20,lng:138.25,status:'visited',date:'2025',geo:'Japan',who:['🦌 小鹿'],cities:[]},
  {id:'vn',name:'Vietnam',cn:'越南',flag:'🇻🇳',lat:16.00,lng:107.80,status:'visited',date:'2015',geo:'Vietnam',cities:[]},
  {id:'la',name:'Laos',cn:'老挝',flag:'🇱🇦',lat:19.85,lng:102.50,status:'visited',date:'2015',geo:'Laos',cities:[]},
- {id:'at',name:'Austria',cn:'奥地利',flag:'🇦🇹',lat:47.59,lng:14.13,status:'visited',date:'2025.08',geo:'Austria',cities:[
+ {id:'at',name:'Austria',cn:'奥地利',flag:'🇦🇹',lat:47.59,lng:14.13,status:'visited',date:'2025.08',geo:'Austria',who:['🐬 海豚'],cities:[
    {id:'at1',name:'Salzburg',cn:'萨尔茨堡',lat:47.8095,lng:13.0550,status:'visited',date:'2025.08'},
    {id:'at2',name:'St. Gilgen',cn:'圣吉尔根',lat:47.7681,lng:13.3664,status:'visited',date:'2025.08'},
    {id:'at3',name:'St. Wolfgang',cn:'圣沃尔夫冈',lat:47.7384,lng:13.4483,status:'visited',date:'2025.08'},
@@ -143,13 +143,13 @@ const seed=[
    {id:'at6',name:'Gosau',cn:'戈绍',lat:47.5853,lng:13.5353,status:'visited',date:'2025.08'},
    {id:'at7',name:'Meteor Shower 🌠 (Perseids)',cn:'流星雨 🌠（英仙座）',lat:47.6000,lng:13.5800,status:'visited',act:'🌠',date:'2025.08'},
    {id:'at8',name:'Stargazing 🔭',cn:'观星 🔭',lat:47.5400,lng:13.4900,status:'visited',act:'🔭',date:'2025.08'}]},
- {id:'fr',name:'France',cn:'法国',flag:'🇫🇷',lat:46.60,lng:2.40,status:'visited',date:'2025',geo:'France',cities:[
-   {id:'fr1',name:'Paris',cn:'巴黎',lat:48.8566,lng:2.3522,status:'visited',date:'2025'},
+ {id:'fr',name:'France',cn:'法国',flag:'🇫🇷',lat:46.60,lng:2.40,status:'visited',date:'2025',geo:'France',who:['🐧 企鹅','🦦 水獭','🇬🇧 英伦喵'],cities:[
+   {id:'fr1',name:'Paris',cn:'巴黎',lat:48.8566,lng:2.3522,status:'visited',date:'2025',who:['🐧 企鹅','🦦 水獭','🇬🇧 英伦喵']},
    {id:'fr2',name:'Nice (South France)',cn:'尼斯（南法）',lat:43.7102,lng:7.2620,status:'visited'}]},
- {id:'pt',name:'Portugal (CoG 2025)',cn:'葡萄牙（CoG 2025）',flag:'🇵🇹',lat:39.50,lng:-8.00,status:'visited',date:'2025.08',geo:'Portugal',cities:[
+ {id:'pt',name:'Portugal (CoG 2025)',cn:'葡萄牙（CoG 2025）',flag:'🇵🇹',lat:39.50,lng:-8.00,status:'visited',date:'2025.08',geo:'Portugal',who:['🦁 狮仔'],cities:[
    {id:'pt1',name:'Lisbon (CoG · IST)',cn:'里斯本（CoG · IST）',lat:38.7369,lng:-9.1399,status:'visited',date:'2025.08'},
    {id:'pt2',name:'Skydiving 🪂 · Portimão',cn:'跳伞 🪂 · 波尔蒂芒',lat:37.1490,lng:-8.5377,status:'visited',act:'🪂',date:'2025.08'}]},
- {id:'uk',name:'UK',cn:'英国',flag:'🇬🇧',lat:54.00,lng:-2.00,status:'visited',date:'2024.10',geo:'United Kingdom',cities:[
+ {id:'uk',name:'UK',cn:'英国',flag:'🇬🇧',lat:54.00,lng:-2.00,status:'visited',date:'2024.10',geo:'United Kingdom',who:['☁️ 云朵'],cities:[
    {id:'uk1',name:'London',cn:'伦敦',lat:51.5074,lng:-0.1278,status:'visited',date:'2024.10'},
    {id:'uk2',name:'Edinburgh',cn:'爱丁堡',lat:55.9533,lng:-3.1883,status:'visited',date:'2024.10'},
    {id:'uk3',name:'York',cn:'约克',lat:53.9600,lng:-1.0810,status:'visited',date:'2024.10'},
@@ -159,28 +159,28 @@ const seed=[
    {id:'us2',name:'Washington DC',cn:'华盛顿',lat:38.9072,lng:-77.0369,status:'visited',date:'2023.12'},
    {id:'us3',name:'Niagara Falls',cn:'尼亚加拉大瀑布',lat:43.0962,lng:-79.0377,status:'visited',date:'2023.12'},
    {id:'us4',name:'New Orleans (NeurIPS 2023)',cn:'新奥尔良（NeurIPS 2023）',lat:29.9511,lng:-90.0715,status:'visited',date:'2023.12'}]},
- {id:'es',name:'Spain',cn:'西班牙',flag:'🇪🇸',lat:40.20,lng:-3.70,status:'visited',date:'2024.02',geo:'Spain',cities:[
+ {id:'es',name:'Spain',cn:'西班牙',flag:'🇪🇸',lat:40.20,lng:-3.70,status:'visited',date:'2024.02',geo:'Spain',who:['🐬 海豚'],cities:[
    {id:'es1',name:'Madrid',cn:'马德里',lat:40.4168,lng:-3.7038,status:'visited',date:'2024.02'},
    {id:'es2',name:'Barcelona',cn:'巴塞罗那',lat:41.3851,lng:2.1734,status:'visited',date:'2024.02'}]},
- {id:'is',name:'Iceland',cn:'冰岛',flag:'🇮🇸',lat:64.90,lng:-19.00,status:'visited',date:'2025.02',geo:'Iceland',cities:[
+ {id:'is',name:'Iceland',cn:'冰岛',flag:'🇮🇸',lat:64.90,lng:-19.00,status:'visited',date:'2025.02',geo:'Iceland',who:['🦁 狮仔','🐧 企鹅','🦉 博士'],cities:[
    {id:'is1',name:'Reykjavik',cn:'雷克雅未克',lat:64.1466,lng:-21.9426,status:'visited',date:'2025.02'},
    {id:'is2',name:'Vík',cn:'维克',lat:63.4187,lng:-19.0060,status:'visited',date:'2025.02'},
    {id:'is3',name:'Akureyri',cn:'阿克雷里',lat:65.6885,lng:-18.0878,status:'visited',date:'2025.02'},
    {id:'is4',name:'Aurora 🌌',cn:'极光 🌌',lat:63.5000,lng:-18.8000,status:'visited',act:'🌌',date:'2025.02'},
    {id:'is5',name:'Stargazing 🔭',cn:'观星 🔭',lat:64.9000,lng:-18.2000,status:'visited',act:'🔭',date:'2025.02'}]},
- {id:'no',name:'Norway',cn:'挪威',flag:'🇳🇴',lat:65.00,lng:14.00,status:'visited',date:'2026.02',geo:'Norway',cities:[
+ {id:'no',name:'Norway',cn:'挪威',flag:'🇳🇴',lat:65.00,lng:14.00,status:'visited',date:'2026.02',geo:'Norway',who:['🐳 小鲸'],cities:[
    {id:'no1',name:'Tromsø',cn:'特罗姆瑟',lat:69.6492,lng:18.9560,status:'visited',date:'2026.02'},
    {id:'no2',name:'Lofoten',cn:'罗弗敦群岛',lat:68.2340,lng:14.5650,status:'visited',date:'2026.02'},
    {id:'no3',name:'Oslo',cn:'奥斯陆',lat:59.9139,lng:10.7522,status:'visited',date:'2026.02'},
    {id:'no4',name:'Aurora 🌌 (Tromsø)',cn:'极光 🌌（特罗姆瑟）',lat:69.7000,lng:19.0000,status:'visited',act:'🌌',date:'2026.02'}]},
- {id:'hr',name:'Croatia',cn:'克罗地亚',flag:'🇭🇷',lat:44.50,lng:16.00,status:'visited',date:'2022.12',geo:'Croatia',cities:[
+ {id:'hr',name:'Croatia',cn:'克罗地亚',flag:'🇭🇷',lat:44.50,lng:16.00,status:'visited',date:'2022.12',geo:'Croatia',who:['🐰 兔兔'],cities:[
    {id:'hr1',name:'Dubrovnik',cn:'杜布罗夫尼克',lat:42.6407,lng:18.1077,status:'visited',date:'2022.12'},
    {id:'hr2',name:'Split',cn:'斯普利特',lat:43.5081,lng:16.4402,status:'visited',date:'2022.12'},
    {id:'hr3',name:'Zadar',cn:'扎达尔',lat:44.1194,lng:15.2314,status:'visited',date:'2022.12'},
    {id:'hr4',name:'Plitvice Lakes',cn:'十六湖（普利特维采）',lat:44.8654,lng:15.5820,status:'visited',date:'2022.12'},
    {id:'hr5',name:'Zagreb',cn:'萨格勒布',lat:45.8150,lng:15.9819,status:'visited',date:'2022.12'},
    {id:'hr6',name:'Hvar',cn:'赫瓦尔岛',lat:43.1729,lng:16.4433,status:'visited',date:'2022.12'}]},
- {id:'si',name:'Slovenia',cn:'斯洛文尼亚',flag:'🇸🇮',lat:46.10,lng:14.80,status:'visited',date:'2023.07',geo:'Slovenia',cities:[
+ {id:'si',name:'Slovenia',cn:'斯洛文尼亚',flag:'🇸🇮',lat:46.10,lng:14.80,status:'visited',date:'2023.07',geo:'Slovenia',who:['🐨 考拉','🦋 蝴蝶','❄️ 小雪','🦊 狐狸'],cities:[
    {id:'si1',name:'Ljubljana',cn:'卢布尔雅那',lat:46.0569,lng:14.5058,status:'visited',date:'2023.07'},
    {id:'si2',name:'Bled',cn:'布莱德',lat:46.3692,lng:14.1136,status:'visited',date:'2023.07'},
    {id:'si3',name:'Lake Bohinj',cn:'博欣湖',lat:46.2790,lng:13.8860,status:'visited',date:'2023.07'},
@@ -188,7 +188,7 @@ const seed=[
    {id:'si5',name:'Piran / Portorož',cn:'皮兰 / 波尔托罗',lat:45.5285,lng:13.5683,status:'visited',date:'2023.07'}]},
  {id:'it',name:'Italy',cn:'意大利',flag:'🇮🇹',lat:43.50,lng:12.00,status:'visited',date:'2023.07',geo:'Italy',cities:[
    {id:'it1',name:'Venice',cn:'威尼斯',lat:45.4408,lng:12.3155,status:'visited',date:'2023.07'}]},
- {id:'eg',name:'Egypt (Dahab)',cn:'埃及（达哈卜）',flag:'🇪🇬',lat:28.50,lng:34.51,status:'visited',dive:true,date:'2025.10',tanks:9,geo:'Egypt',big:'Blue Hole, turtles, lionfish, coral reefs, dolphins',season:'Year-round',cities:[
+ {id:'eg',name:'Egypt (Dahab)',cn:'埃及（达哈卜）',flag:'🇪🇬',lat:28.50,lng:34.51,status:'visited',dive:true,date:'2025.10',tanks:9,geo:'Egypt',big:'Blue Hole, turtles, lionfish, coral reefs, dolphins',season:'Year-round',who:['🐬 海豚'],cities:[
    {id:'eg1',name:'Dahab (PADI OW)',cn:'达哈卜（考 OW 证）',lat:28.5010,lng:34.5130,status:'visited',dive:true,date:'2025.10',big:'Blue Hole, turtles, lionfish',season:'Year-round'},
    {id:'eg2',name:'Horse Riding 🐴 (Dahab)',cn:'骑马 🐴（达哈卜）',lat:28.4880,lng:34.5060,status:'visited',act:'🐴',date:'2025.10'}]},
  {id:'cy',name:'Cyprus',cn:'塞浦路斯',flag:'🇨🇾',lat:34.99,lng:33.90,status:'visited',dive:true,date:'2026.05',tanks:4,geo:'Cyprus',big:'MUSAN underwater museum, Zenobia wreck, turtles, groupers',season:'May–Nov',cities:[
