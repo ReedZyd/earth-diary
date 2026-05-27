@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>地球存活日记 · Earth Survival Diary</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root{--bg:#0f1115;--panel:#171a21;--line:#262b35;--text:#e8eaed;--muted:#9aa3b2;--green:#34c759;--blue:#3b82f6;--accent:#6ea8fe;--mapbg:#0b0d11;--chipbg:#1b212b;}
+  body.day{--bg:#f4f6f9;--panel:#ffffff;--line:#dde1e7;--text:#1b1f27;--muted:#5c6470;--mapbg:#e6eaef;--chipbg:#eef1f5;}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;background:var(--bg);color:var(--text)}
+  #app{display:flex;flex-direction:column;height:100%}
+  header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+  header h1{font-size:16px;margin:0;font-weight:650}
+  .stats{font-size:13px;color:var(--muted)} .stats b{color:var(--text)}
+  .spacer{flex:1}
+  .btn{background:transparent;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer}
+  .btn:hover{border-color:var(--accent)}
+  .hint{font-size:12px;color:var(--muted);padding:6px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+  #main{flex:1;display:flex;min-height:0}
+  #map{flex:1;min-height:0;background:var(--mapbg);position:relative}
+  #ageCounter{position:absolute;top:10px;right:10px;z-index:600;background:rgba(15,17,21,.82);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--muted)}
+  body.day #ageCounter{background:rgba(255,255,255,.9)}
+  #ageCounter b{color:var(--text)}
+  #tankBar{position:absolute;top:52px;right:10px;z-index:600;width:182px;background:rgba(15,17,21,.82);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--muted)}
+  body.day #tankBar{background:rgba(255,255,255,.9)}
+  #tankBar .lab{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;gap:6px}
+  #tankBar .lab b{color:var(--text)}
+  #tankBar .track{height:7px;border-radius:4px;background:rgba(127,127,127,.25);overflow:hidden}
+  #tankBar .fill{height:100%;background:linear-gradient(90deg,#34c759,#6ea8fe);border-radius:4px;transition:width .4s}
+  #side{width:300px;background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:10px}
+  #side h2{font-size:13px;color:var(--muted);margin:6px 4px;font-weight:600}
+  .legend{display:flex;gap:6px;flex-wrap:wrap;padding:2px 2px 8px}
+  .chip{display:inline-flex;align-items:center;gap:5px;background:var(--chipbg);color:var(--text);border:1px solid var(--line);border-radius:14px;padding:3px 9px;font-size:12px;cursor:pointer;user-select:none}
+  .chip:hover{border-color:var(--accent)}
+  .chip.sel{background:var(--accent);color:#0b1020;border-color:var(--accent);font-weight:600}
+  .chip .dot{width:9px;height:9px}
+  .secthead{display:flex;align-items:center;gap:8px;margin:8px 4px 4px;border-top:1px solid var(--line);padding-top:8px}
+  .secthead span{font-size:13px;color:var(--muted);font-weight:600;flex:1}
+  .row2{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;border:1px solid transparent}
+  .row2:hover{background:rgba(127,127,127,.12);border-color:var(--line)}
+  .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .dot.visited{background:var(--green)} .dot.soon{background:#ff9f0a} .dot.planned{background:var(--blue)}
+  .row2 .nm{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+  .mini{color:var(--muted);font-size:12px;border:1px solid var(--line);background:none;border-radius:6px;padding:2px 6px;cursor:pointer}
+  .mini:hover{border-color:var(--accent);color:var(--text)}
+  .diveWrap-outer{background:none;border:none}
+  .diveWrap{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:16px;border-radius:50%;border:3px solid}
+  .diveWrap.visited{border-color:var(--green);background:rgba(52,199,89,.30)}
+  .diveWrap.soon{border-color:#ff9f0a;background:rgba(255,159,10,.30)}
+  .diveWrap.planned{border-color:var(--blue);background:rgba(59,130,246,.30)}
+  .leaflet-tooltip.info{background:#10131a;border:1px solid #2a2f3a;color:#e8eaed;font-size:13px;line-height:1.65;box-shadow:0 6px 20px rgba(0,0,0,.5);min-width:160px;max-width:320px;white-space:normal;padding:9px 12px;border-radius:9px}
+  .leaflet-tooltip.info b{color:#fff}
+  .leaflet-popup-content{font-family:inherit}
+  .pop b{font-size:13px}.pop .r{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+  .pop button{font-size:12px;border:1px solid #ccc;border-radius:6px;padding:4px 8px;background:#fff;cursor:pointer}
+  @media(max-width:680px){
+    #main{flex-direction:column}
+    #side{width:100%;max-height:40vh;border-left:none;border-top:1px solid var(--line)}
+    header{gap:6px;padding:8px 10px} header h1{font-size:14px}
+    #motto{display:none} .btn{padding:5px 9px;font-size:12px}
+    #tankBar{top:auto;bottom:10px;right:10px;width:160px} #ageCounter{padding:4px 8px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>🌍 <span id="titleTxt">地球存活日记</span> <span id="motto" style="font-weight:400;font-size:12px;color:var(--muted);font-style:italic;margin-left:4px"></span></h1>
+    <button class="btn" id="worldBtn"></button>
+    <button class="btn" id="chinaBtn"></button>
+    <button class="btn" id="langBtn"></button>
+    <button class="btn" id="themeBtn"></button>
+    <div class="stats" id="stats"></div>
+    <div class="spacer"></div>
+    <button class="btn" id="exportBtn"></button>
+    <button class="btn" id="importBtn"></button>
+    <button class="btn" id="shotBtn"></button>
+    <input type="file" id="importFile" accept="application/json" style="display:none" />
+  </header>
+  <div class="hint" id="hint"></div>
+  <div id="main">
+    <div id="map"><div id="tankBar"></div></div>
+    <aside id="side">
+      <div class="legend" id="legend">
+        <button class="chip" data-cat="visited"></button>
+        <button class="chip" data-cat="soon"></button>
+        <button class="chip" data-cat="planned"></button>
+        <button class="chip" data-cat="🤿"></button>
+        <button class="chip" data-cat="🪂"></button>
+        <button class="chip" data-cat="🐴"></button>
+        <button class="chip" data-cat="🌌"></button>
+        <button class="chip" data-cat="🌠"></button>
+        <button class="chip" data-cat="🔭"></button>
+      </div>
+      <div class="secthead" style="display:none"><span id="pplHead"></span><button class="mini" id="peopleAll"></button><button class="mini" id="peopleToggle"></button></div>
+      <div class="legend" id="people" style="display:none"></div>
+      <div id="sideHead"></div>
+      <div id="list"></div>
+    </aside>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const KEY='travelMapData_v11';
+const catSel=new Set(), peopleSel=new Set();
+let lang='cn';
+const T={
+ cn:{title:'地球存活日记',motto:'今天比昨天更自由',world:'🌍 世界',china:'🇨🇳 中国',lang:'EN',exp:'导出',imp:'导入',shot:'📷 截图',
+   visited:'去过',soon:'待去',wishlist:'想去',diving:'潜水',skydiving:'跳伞',horse:'骑马',aurora:'极光',meteor:'流星雨',stargazing:'观星',
+   ppl:'👥 同行（点击只看选中）',showall:'全部',hide:'收起',show:'展开',countries:'国家（点击放大进入）',
+   hintC:'把鼠标移上去，有惊喜 ✨（放大看城市，点图例 / 同行可筛选）',
+   places:'城市',big:'大货',high:'看点',season:'季节',withw:'同行',backInfo:'：悬停看详情，点地点可改。缩小回到世界视图。',cityTodo:'（城市待补充）',
+   tanks:'潜水瓶',tankf:(t,c)=>'本次 '+t+' 瓶 · 离开累计 '+c+' 瓶',note:'备注',filtered:'筛选中：只显示选中的类别 / 活动（再点一次图例可取消）',
+   agefmt:(y,m,d)=>'已度过 <b>'+y+'</b> 年 <b>'+m+'</b> 月 <b>'+d+'</b> 天',statsfmt:(v,s,p,dv,tk)=>`去过 <b>${v}</b> · 待去 <b>${s}</b> · 想去 <b>${p}</b> · 潜水点 <b>${dv}</b> 🤿 · 共 <b>${tk}</b> 瓶`},
+ en:{title:'Survival Diary',motto:'',world:'🌍 World',china:'🇨🇳 China',lang:'中',exp:'Export',imp:'Import',shot:'📷 Screenshot',
+   visited:'Visited',soon:'Upcoming',wishlist:'Wishlist',diving:'Diving',skydiving:'Skydiving',horse:'Horse riding',aurora:'Aurora',meteor:'Meteor',stargazing:'Stargazing',
+   ppl:'👥 Companions (click to isolate)',showall:'Show all',hide:'Hide',show:'Show',countries:'Countries (click to zoom in)',
+   hintC:'Hover around — surprises await ✨ (zoom in for cities; filter via legend / companions)',
+   places:'Places',big:'Big animals',high:'Highlights',season:'Season',withw:'With',backInfo:' — hover for details, click a place to edit. Zoom out for the world view.',cityTodo:'(cities to be added)',
+   tanks:'Tanks',tankf:(t,c)=>t+' this trip → '+c+' total',note:'Note',filtered:'Filtered: only selected categories / activities (click chip again to clear)',
+   agefmt:(y,m,d)=>'<b>'+y+'</b>y <b>'+m+'</b>m <b>'+d+'</b>d',statsfmt:(v,s,p,dv,tk)=>`Places: visited <b>${v}</b> · upcoming <b>${s}</b> · wishlist <b>${p}</b> · dive <b>${dv}</b> 🤿 · <b>${tk}</b> tanks`}
+};
+function TR(k){return T[lang][k];}
+// name=EN, cn=中文. Countries also have flag, geo(GeoJSON name). who=同行. date. act=活动符号. tanks. tag.
+const seed=[
+ {id:'nl',name:'Netherlands',cn:'荷兰',flag:'🇳🇱',lat:52.13,lng:5.29,status:'visited',date:'2022–2026',geo:'Netherlands',tag:'will become a doctor 🎓',cities:[
+   {id:'nl1',name:'Amsterdam',cn:'阿姆斯特丹',lat:52.3702,lng:4.8952,status:'visited'},
+   {id:'nl2',name:'Eindhoven',cn:'埃因霍温',lat:51.4416,lng:5.4697,status:'visited'}]},
+ {id:'de',name:'Germany (details later)',cn:'德国（城市待补）',flag:'🇩🇪',lat:51.10,lng:10.40,status:'visited',geo:'Germany',cities:[]},
+ {id:'be',name:'Belgium (details later)',cn:'比利时（城市待补）',flag:'🇧🇪',lat:50.64,lng:4.67,status:'visited',geo:'Belgium',cities:[]},
+ {id:'cn',name:'China',cn:'中国',flag:'🇨🇳',lat:35.00,lng:103.00,status:'visited',geo:'China',cities:[]},
+ {id:'jp',name:'Japan',cn:'日本',flag:'🇯🇵',lat:36.20,lng:138.25,status:'visited',date:'2025',geo:'Japan',cities:[]},
+ {id:'vn',name:'Vietnam',cn:'越南',flag:'🇻🇳',lat:16.00,lng:107.80,status:'visited',date:'2015',geo:'Vietnam',cities:[]},
+ {id:'la',name:'Laos',cn:'老挝',flag:'🇱🇦',lat:19.85,lng:102.50,status:'visited',date:'2015',geo:'Laos',cities:[]},
+ {id:'at',name:'Austria',cn:'奥地利',flag:'🇦🇹',lat:47.59,lng:14.13,status:'visited',date:'2025.08',geo:'Austria',cities:[
+   {id:'at1',name:'Salzburg',cn:'萨尔茨堡',lat:47.8095,lng:13.0550,status:'visited',date:'2025.08'},
+   {id:'at2',name:'St. Gilgen',cn:'圣吉尔根',lat:47.7681,lng:13.3664,status:'visited',date:'2025.08'},
+   {id:'at3',name:'St. Wolfgang',cn:'圣沃尔夫冈',lat:47.7384,lng:13.4483,status:'visited',date:'2025.08'},
+   {id:'at4',name:'Bad Ischl',cn:'巴德伊舍',lat:47.7113,lng:13.6231,status:'visited',date:'2025.08'},
+   {id:'at5',name:'Hallstatt',cn:'哈尔施塔特',lat:47.5615,lng:13.6486,status:'visited',date:'2025.08'},
+   {id:'at6',name:'Gosau',cn:'戈绍',lat:47.5853,lng:13.5353,status:'visited',date:'2025.08'},
+   {id:'at7',name:'Meteor Shower 🌠 (Perseids)',cn:'流星雨 🌠（英仙座）',lat:47.6000,lng:13.5800,status:'visited',act:'🌠',date:'2025.08'},
+   {id:'at8',name:'Stargazing 🔭',cn:'观星 🔭',lat:47.5400,lng:13.4900,status:'visited',act:'🔭',date:'2025.08'}]},
+ {id:'fr',name:'France',cn:'法国',flag:'🇫🇷',lat:46.60,lng:2.40,status:'visited',date:'2025',geo:'France',cities:[
+   {id:'fr1',name:'Paris',cn:'巴黎',lat:48.8566,lng:2.3522,status:'visited',date:'2025'},
+   {id:'fr2',name:'Nice (South France)',cn:'尼斯（南法）',lat:43.7102,lng:7.2620,status:'visited'}]},
+ {id:'pt',name:'Portugal (CoG 2025)',cn:'葡萄牙（CoG 2025）',flag:'🇵🇹',lat:39.50,lng:-8.00,status:'visited',date:'2025.08',geo:'Portugal',cities:[
+   {id:'pt1',name:'Lisbon (CoG · IST)',cn:'里斯本（CoG · IST）',lat:38.7369,lng:-9.1399,status:'visited',date:'2025.08'},
+   {id:'pt2',name:'Skydiving 🪂 · Portimão',cn:'跳伞 🪂 · 波尔蒂芒',lat:37.1490,lng:-8.5377,status:'visited',act:'🪂',date:'2025.08'}]},
+ {id:'uk',name:'UK',cn:'英国',flag:'🇬🇧',lat:54.00,lng:-2.00,status:'visited',date:'2024.10',geo:'United Kingdom',cities:[
+   {id:'uk1',name:'London',cn:'伦敦',lat:51.5074,lng:-0.1278,status:'visited',date:'2024.10'},
+   {id:'uk2',name:'Edinburgh',cn:'爱丁堡',lat:55.9533,lng:-3.1883,status:'visited',date:'2024.10'},
+   {id:'uk3',name:'York',cn:'约克',lat:53.9600,lng:-1.0810,status:'visited',date:'2024.10'},
+   {id:'uk4',name:'White Cliffs of Dover',cn:'多佛白崖',lat:51.1350,lng:1.3660,status:'visited',date:'2024.10'}]},
+ {id:'us',name:'USA',cn:'美国',flag:'🇺🇸',lat:39.00,lng:-95.00,status:'visited',date:'2023.12',geo:'United States of America',cities:[
+   {id:'us1',name:'New York',cn:'纽约',lat:40.7128,lng:-74.0060,status:'visited',date:'2023.12'},
+   {id:'us2',name:'Washington DC',cn:'华盛顿',lat:38.9072,lng:-77.0369,status:'visited',date:'2023.12'},
+   {id:'us3',name:'Niagara Falls',cn:'尼亚加拉大瀑布',lat:43.0962,lng:-79.0377,status:'visited',date:'2023.12'},
+   {id:'us4',name:'New Orleans (NeurIPS 2023)',cn:'新奥尔良（NeurIPS 2023）',lat:29.9511,lng:-90.0715,status:'visited',date:'2023.12'}]},
+ {id:'es',name:'Spain',cn:'西班牙',flag:'🇪🇸',lat:40.20,lng:-3.70,status:'visited',date:'2024.02',geo:'Spain',cities:[
+   {id:'es1',name:'Madrid',cn:'马德里',lat:40.4168,lng:-3.7038,status:'visited',date:'2024.02'},
+   {id:'es2',name:'Barcelona',cn:'巴塞罗那',lat:41.3851,lng:2.1734,status:'visited',date:'2024.02'}]},
+ {id:'is',name:'Iceland',cn:'冰岛',flag:'🇮🇸',lat:64.90,lng:-19.00,status:'visited',date:'2025.02',geo:'Iceland',cities:[
+   {id:'is1',name:'Reykjavik',cn:'雷克雅未克',lat:64.1466,lng:-21.9426,status:'visited',date:'2025.02'},
+   {id:'is2',name:'Vík',cn:'维克',lat:63.4187,lng:-19.0060,status:'visited',date:'2025.02'},
+   {id:'is3',name:'Akureyri',cn:'阿克雷里',lat:65.6885,lng:-18.0878,status:'visited',date:'2025.02'},
+   {id:'is4',name:'Aurora 🌌',cn:'极光 🌌',lat:63.5000,lng:-18.8000,status:'visited',act:'🌌',date:'2025.02'},
+   {id:'is5',name:'Stargazing 🔭',cn:'观星 🔭',lat:64.9000,lng:-18.2000,status:'visited',act:'🔭',date:'2025.02'}]},
+ {id:'no',name:'Norway',cn:'挪威',flag:'🇳🇴',lat:65.00,lng:14.00,status:'visited',date:'2026.02',geo:'Norway',cities:[
+   {id:'no1',name:'Tromsø',cn:'特罗姆瑟',lat:69.6492,lng:18.9560,status:'visited',date:'2026.02'},
+   {id:'no2',name:'Lofoten',cn:'罗弗敦群岛',lat:68.2340,lng:14.5650,status:'visited',date:'2026.02'},
+   {id:'no3',name:'Oslo',cn:'奥斯陆',lat:59.9139,lng:10.7522,status:'visited',date:'2026.02'},
+   {id:'no4',name:'Aurora 🌌 (Tromsø)',cn:'极光 🌌（特罗姆瑟）',lat:69.7000,lng:19.0000,status:'visited',act:'🌌',date:'2026.02'}]},
+ {id:'hr',name:'Croatia',cn:'克罗地亚',flag:'🇭🇷',lat:44.50,lng:16.00,status:'visited',date:'2022.12',geo:'Croatia',cities:[
+   {id:'hr1',name:'Dubrovnik',cn:'杜布罗夫尼克',lat:42.6407,lng:18.1077,status:'visited',date:'2022.12'},
+   {id:'hr2',name:'Split',cn:'斯普利特',lat:43.5081,lng:16.4402,status:'visited',date:'2022.12'},
+   {id:'hr3',name:'Zadar',cn:'扎达尔',lat:44.1194,lng:15.2314,status:'visited',date:'2022.12'},
+   {id:'hr4',name:'Plitvice Lakes',cn:'十六湖（普利特维采）',lat:44.8654,lng:15.5820,status:'visited',date:'2022.12'},
+   {id:'hr5',name:'Zagreb',cn:'萨格勒布',lat:45.8150,lng:15.9819,status:'visited',date:'2022.12'},
+   {id:'hr6',name:'Hvar',cn:'赫瓦尔岛',lat:43.1729,lng:16.4433,status:'visited',date:'2022.12'}]},
+ {id:'si',name:'Slovenia',cn:'斯洛文尼亚',flag:'🇸🇮',lat:46.10,lng:14.80,status:'visited',date:'2023.07',geo:'Slovenia',cities:[
+   {id:'si1',name:'Ljubljana',cn:'卢布尔雅那',lat:46.0569,lng:14.5058,status:'visited',date:'2023.07'},
+   {id:'si2',name:'Bled',cn:'布莱德',lat:46.3692,lng:14.1136,status:'visited',date:'2023.07'},
+   {id:'si3',name:'Lake Bohinj',cn:'博欣湖',lat:46.2790,lng:13.8860,status:'visited',date:'2023.07'},
+   {id:'si4',name:'Postojna Cave',cn:'波斯托伊纳洞穴',lat:45.7831,lng:14.2034,status:'visited',date:'2023.07'},
+   {id:'si5',name:'Piran / Portorož',cn:'皮兰 / 波尔托罗',lat:45.5285,lng:13.5683,status:'visited',date:'2023.07'}]},
+ {id:'it',name:'Italy',cn:'意大利',flag:'🇮🇹',lat:43.50,lng:12.00,status:'visited',date:'2023.07',geo:'Italy',cities:[
+   {id:'it1',name:'Venice',cn:'威尼斯',lat:45.4408,lng:12.3155,status:'visited',date:'2023.07'}]},
+ {id:'eg',name:'Egypt (Dahab)',cn:'埃及（达哈卜）',flag:'🇪🇬',lat:28.50,lng:34.51,status:'visited',dive:true,date:'2025.10',tanks:9,geo:'Egypt',big:'Blue Hole, turtles, lionfish, coral reefs, dolphins',season:'Year-round',cities:[
+   {id:'eg1',name:'Dahab (PADI OW)',cn:'达哈卜（考 OW 证）',lat:28.5010,lng:34.5130,status:'visited',dive:true,date:'2025.10',big:'Blue Hole, turtles, lionfish',season:'Year-round'},
+   {id:'eg2',name:'Horse Riding 🐴 (Dahab)',cn:'骑马 🐴（达哈卜）',lat:28.4880,lng:34.5060,status:'visited',act:'🐴',date:'2025.10'}]},
+ {id:'cy',name:'Cyprus',cn:'塞浦路斯',flag:'🇨🇾',lat:34.99,lng:33.90,status:'visited',dive:true,date:'2026.05',tanks:4,geo:'Cyprus',big:'MUSAN underwater museum, Zenobia wreck, turtles, groupers',season:'May–Nov',cities:[
+   {id:'cy1',name:'Ayia Napa',cn:'阿依纳帕',lat:34.9890,lng:33.9990,status:'visited',date:'2026.05'},
+   {id:'cy2',name:'Protaras',cn:'普罗塔拉斯',lat:35.0125,lng:34.0583,status:'visited',date:'2026.05'},
+   {id:'cy3',name:'Green Bay (dive)',cn:'绿湾 Green Bay（潜点）',lat:34.9670,lng:34.0800,status:'visited',dive:true,big:'Turtles, groupers, seahorses',season:'',date:'2026.05.21'},
+   {id:'cy4',name:'MUSAN (dive)',cn:'MUSAN 水下博物馆（潜点）',lat:34.9990,lng:33.9600,status:'visited',dive:true,big:'Underwater sculptures, fish schools',season:'',date:'2026.05.21'},
+   {id:'cy5',name:'Zenobia Wreck · Larnaca (dive)',cn:'Zenobia 沉船 · 拉纳卡（潜点）',lat:34.9000,lng:33.6420,status:'visited',dive:true,big:'Large shipwreck, groupers, barracuda',season:'',date:'2026.05.22'},
+   {id:'cy6',name:'Paphos (AAMAS)',cn:'帕福斯（AAMAS）',lat:34.7720,lng:32.4297,status:'visited',date:'2026.05'}]},
+ {id:'kr',name:'South Korea (ICML, upcoming)',cn:'韩国（ICML，待去）',flag:'🇰🇷',lat:36.50,lng:127.80,status:'soon',cities:[
+   {id:'kr1',name:'Seoul (ICML)',cn:'首尔（ICML）',lat:37.5665,lng:126.9780,status:'soon'}]},
+ {id:'ca',name:'Canada (RLC, upcoming)',cn:'加拿大（RLC，待去）',flag:'🇨🇦',lat:56.00,lng:-106.00,status:'soon',cities:[
+   {id:'ca1',name:'RLC host city',cn:'RLC 举办城市',lat:53.5461,lng:-113.4938,status:'soon'}]},
+ {id:'sg',name:'Singapore (conference)',cn:'新加坡（开会）',flag:'🇸🇬',lat:1.3521,lng:103.8198,status:'visited',date:'2025.05',geo:'Singapore',cities:[
+   {id:'sg1',name:'Singapore',cn:'新加坡',lat:1.3521,lng:103.8198,status:'visited',date:'2025.05'}]},
+ {id:'my',name:'Malaysia (Semporna · DSD)',cn:'马来西亚（仙本那·体验潜）',flag:'🇲🇾',lat:4.50,lng:118.30,status:'visited',dive:true,date:'2025.05',geo:'Malaysia',tag:'体验潜 DSD（未计入证书瓶数）',big:'Turtles, barracuda/jack tornadoes, reef sharks, rich coral (near Sipadan)',season:'Apr–Dec (dry season best viz)',cities:[
+   {id:'my1',name:'Semporna',cn:'仙本那',lat:4.4848,lng:118.6118,status:'visited',date:'2025.05'},
+   {id:'my2',name:'Mataking (dive)',cn:'马达京（潜点）',lat:4.6100,lng:118.9480,status:'visited',dive:true,big:'Turtles, barracuda tornado, reef sharks',season:'',date:'2025.05'},
+   {id:'my3',name:'Mabul (dive)',cn:'美人鱼岛 Mabul（潜点）',lat:4.2470,lng:118.6290,status:'visited',dive:true,big:'Macro paradise, turtles, seahorses',season:'',date:'2025.05'},
+   {id:'my4',name:'Pom Pom (dive)',cn:'邦邦岛（潜点）',lat:4.6417,lng:118.8650,status:'visited',dive:true,big:'Turtles, reef sharks, coral',season:'',date:'2025.05'}]},
+ // —— Dive bucket list (wishlist) ——
+ {id:'gal',name:'Galápagos (Ecuador)',cn:'加拉帕戈斯（厄瓜多尔）',flag:'🇪🇨',lat:-0.78,lng:-91.00,status:'planned',dive:true,big:'Hammerhead schools, whale sharks, marine iguanas, sea lions, mantas',season:'Whale sharks Jun–Nov',cities:[
+   {id:'gal1',name:'Darwin & Wolf',cn:'达尔文 / 沃尔夫岛',lat:1.6783,lng:-91.9989,status:'planned',dive:true,big:'Whale sharks, hammerhead schools',season:'Jun–Nov'}]},
+ {id:'mv',name:'Maldives',cn:'马尔代夫',flag:'🇲🇻',lat:3.20,lng:73.20,status:'planned',dive:true,big:'Whale sharks (year-round), manta aggregations',season:'Mantas (Hanifaru) Jun–Nov',cities:[
+   {id:'mv1',name:'Hanifaru Bay',cn:'哈尼法卢湾',lat:5.1700,lng:73.0700,status:'planned',dive:true,big:'Manta schools, whale sharks',season:'Jun–Nov'}]},
+ {id:'soc',name:'Socorro (Mexico)',cn:'索科罗（墨西哥）',flag:'🇲🇽',lat:18.79,lng:-110.97,status:'planned',dive:true,big:'Giant oceanic mantas, humpback whales, hammerheads, dolphins',season:'Nov–May (humpbacks Jan–Mar)',cities:[]},
+ {id:'ra',name:'Raja Ampat (Indonesia)',cn:'四王群岛（印尼）',flag:'🇮🇩',lat:-0.50,lng:130.50,status:'planned',dive:true,big:"Mantas, reef sharks, world's richest marine biodiversity",season:'Oct–Apr',cities:[]},
+ {id:'coco',name:'Cocos (Costa Rica)',cn:'科科岛（哥斯达黎加）',flag:'🇨🇷',lat:5.53,lng:-87.06,status:'planned',dive:true,big:'Hammerhead schools, whitetip sharks, mantas',season:'Jun–Dec',cities:[]},
+ {id:'tiger',name:'Tiger Beach (Bahamas)',cn:'虎滩（巴哈马）',flag:'🇧🇸',lat:26.80,lng:-79.00,status:'planned',dive:true,big:'Tiger sharks, great hammerheads, lemon sharks',season:'Tigers Oct–Jan / Hammerheads Dec–Mar',cities:[]},
+ {id:'sar',name:'South Africa (Sardine Run)',cn:'南非（沙丁鱼大迁徙）',flag:'🇿🇦',lat:-31.00,lng:29.50,status:'planned',dive:true,big:"Sardine run, dolphins, sharks, Bryde's whales; great white cage diving",season:'Jun–Jul',cities:[]},
+ {id:'nin',name:'Ningaloo (Australia)',cn:'宁格鲁（澳大利亚）',flag:'🇦🇺',lat:-22.00,lng:113.90,status:'planned',dive:true,big:'Whale sharks, humpback whales, mantas',season:'Whale sharks Mar–Aug',cities:[]},
+ {id:'mala',name:'Malapascua (Philippines)',cn:'马拉帕斯夸（菲律宾）',flag:'🇵🇭',lat:11.33,lng:124.12,status:'planned',dive:true,big:'Thresher sharks (daily dawn dives)',season:'Year-round (best Oct–May)',cities:[]},
+ {id:'palau',name:'Palau',cn:'帕劳',flag:'🇵🇼',lat:7.34,lng:134.48,status:'planned',dive:true,big:'Shark schools, Blue Corner, Jellyfish Lake',season:'Year-round (best Nov–May)',cities:[]},
+ {id:'tonga',name:'Tonga',cn:'汤加',flag:'🇹🇴',lat:-21.20,lng:-175.20,status:'planned',dive:true,big:'Swim with humpback whales',season:'Jul–Oct',cities:[]},
+ {id:'fak',name:'Fakarava (French Polynesia)',cn:'法卡拉瓦（法属波利尼西亚）',flag:'🇵🇫',lat:-16.30,lng:-145.50,status:'planned',dive:true,big:'Wall of sharks (hundreds of grey reef sharks), grouper spawning',season:'Grouper spawning Jun–Jul',cities:[]},
+ // —— Wishlist (non-dive) ——
+ {id:'sval',name:'Svalbard (Arctic)',cn:'斯瓦尔巴（北极）',flag:'🇸🇯',lat:78.22,lng:15.63,status:'planned',big:'Polar bears, walrus, Arctic fjords, aurora',season:'Aurora in winter / midnight sun in summer',cities:[
+   {id:'sval1',name:'Longyearbyen',cn:'朗伊尔城',lat:78.2232,lng:15.6267,status:'planned'}]},
+ {id:'ke',name:'Kenya',cn:'肯尼亚',flag:'🇰🇪',lat:0.02,lng:37.90,status:'planned',big:'Lions, elephants, rhinos, wildebeest migration (Big Five)',season:'Wildebeest migration Jul–Oct',cities:[
+   {id:'ke1',name:'Maasai Mara',cn:'马赛马拉',lat:-1.5000,lng:35.1500,status:'planned'},
+   {id:'ke2',name:'Nairobi',cn:'内罗毕',lat:-1.2921,lng:36.8219,status:'planned'}]},
+ {id:'fo',name:'Faroe Islands',cn:'法罗群岛',flag:'🇫🇴',lat:62.00,lng:-6.80,status:'planned',big:'海鹦、Múlafossur 瀑布、戏剧性峡湾、草顶屋',season:'夏季 6–8 月（海鸟 / 极昼）',cities:[
+   {id:'fo1',name:'Tórshavn',cn:'托尔斯港',lat:62.0079,lng:-6.7720,status:'planned'},
+   {id:'fo2',name:'Múlafossur Waterfall',cn:'穆拉福斯瀑布',lat:61.4360,lng:-6.8770,status:'planned'}]}
+];
+function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r);}catch(e){}return seed;}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}}
+let data=load();
+
+if(typeof L==='undefined'){
+  const root=document.getElementById('map');
+  let html='<div style="padding:18px;overflow:auto;height:100%">'
+   +'<div style="background:#3a2a12;border:1px solid #6b4f1f;border-radius:8px;padding:10px;margin-bottom:12px;color:#f2e7a8;font-size:13px">⚠️ 地图库未能从网络加载（可能没联网或被打开环境拦截）。请<b>联网</b>后用 Chrome / Safari 打开本文件。下面是文字版旅行清单：</div>';
+  data.forEach(c=>{html+='<div style="margin:8px 2px;font-size:14px;border-bottom:1px solid #2a2f3a;padding-bottom:6px"><b>'+(c.flag?c.flag+' ':'')+(c.cn||c.name)+'</b>'+(c.date?' · '+c.date:'')+(c.tanks?' · 潜水 '+c.tanks+' 瓶':'')+(c.who&&c.who.length?' · 同行：'+c.who.join('、'):'')+((c.cities&&c.cities.length)?'<br><span style="color:#9aa3b2;font-size:12px">'+c.cities.map(x=>x.cn||x.name).join('，')+'</span>':'')+'</div>';});
+  html+='</div>';root.innerHTML=html;
+  const hn=document.getElementById('hint');if(hn)hn.textContent='地图库未加载——已显示文字版清单';
+  throw new Error('Leaflet not loaded');
+}
+
+const ZT=5;
+const map=L.map('map',{worldCopyJump:true}).setView([25,30],2);
+let tileLayer=null, theme='day';
+function setTheme(t){
+  theme=t;document.body.classList.toggle('day',t==='day');
+  if(tileLayer){map.removeLayer(tileLayer);tileLayer=null;}
+  tileLayer=L.tileLayer(t==='day'?'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png':'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,crossOrigin:true,attribution:'© OpenStreetMap, © CARTO'}).addTo(map);
+  tileLayer.bringToBack();
+  const b=document.getElementById('themeBtn');if(b)b.textContent=(t==='day'?'🌙':'☀️');
+}
+setTheme('day');
+
+let geoLayer=null;
+fetch('https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.json').then(r=>r.json()).then(gj=>{
+  geoLayer=L.geoJSON(gj,{interactive:false,style:f=>{
+    const on=data.some(c=>c.status==='visited'&&c.geo===f.properties.name);
+    return on?{fillColor:'#f2e7a8',fillOpacity:.5,color:'#f2e7a8',weight:1,opacity:.5}:{fillOpacity:0,opacity:0,weight:0};
+  }}).addTo(map);geoLayer.bringToBack();updateGeo();
+}).catch(()=>{});
+function updateGeo(){if(!geoLayer)return;if(map.getZoom()<ZT){if(!map.hasLayer(geoLayer)){geoLayer.addTo(map);geoLayer.bringToBack();}}else if(map.hasLayer(geoLayer)){map.removeLayer(geoLayer);}}
+
+let markers={}, curKey=null;
+function clearMarkers(){Object.values(markers).forEach(m=>map.removeLayer(m));markers={};}
+function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function shortName(s){return (s||'').replace(/\s*[（(].*$/,'').replace(/\s*·.*$/,'').trim();}
+function cName(c){return esc(lang==='cn'?(c.cn||c.name):c.name);}
+function cityDisp(ci){return esc(lang==='cn'?(ci.cn||ci.name):ci.name);}
+function cityShort(ci){return esc(shortName(lang==='cn'?(ci.cn||ci.name):ci.name));}
+function stLabel(s){return s==='visited'?TR('visited'):(s==='soon'?TR('soon'):TR('wishlist'));}
+function catOf(o){return o.dive?'🤿':(o.act?o.act:o.status);}
+function tankInfo(){const ds=data.filter(c=>c.tanks).slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));let run=0;const m={};ds.forEach(c=>{run+=c.tanks;m[c.id]={trip:c.tanks,cum:run};});return {m,total:run};}
+let TANKS={m:{},total:0};
+function peopleMatch(o){return peopleSel.size===0 || (o.who && o.who.some(p=>peopleSel.has(p)));}
+function countryHasMatch(c){
+  if(catSel.size===0) return peopleMatch(c);
+  if(catSel.has(catOf(c))&&peopleMatch(c)) return true;
+  return (c.cities||[]).some(ci=>catSel.has(catOf(ci))&&(peopleMatch(ci)||peopleMatch(c)));
+}
+function emojiIcon(emoji,status){return L.divIcon({className:'diveWrap-outer',html:`<div class="diveWrap ${status||'planned'}">${emoji}</div>`,iconSize:[30,30],iconAnchor:[15,15],popupAnchor:[0,-14]});}
+function mkLayer(o){
+  if(o.dive) return L.marker([o.lat,o.lng],{icon:emojiIcon('🤿',o.status)});
+  if(o.act)  return L.marker([o.lat,o.lng],{icon:emojiIcon(o.act,o.status)});
+  return L.circleMarker([o.lat,o.lng],{radius:8,color:'#0b0d11',weight:1.5,fillColor:(o.status==='visited'?'#34c759':o.status==='soon'?'#ff9f0a':'#3b82f6'),fillOpacity:.95});
+}
+function tip(o,isCountry){
+  const flag=isCountry&&o.flag?o.flag+' ':'';
+  let h='<b>'+flag+(o.dive?'🤿 ':(o.act?o.act+' ':''))+(isCountry?cName(o):cityDisp(o))+'</b><br>'+stLabel(o.status);
+  if(o.date)h+=' · 🗓 '+esc(o.date);
+  if(isCountry&&o.cities&&o.cities.length)h+='<br><b>'+TR('places')+':</b> '+o.cities.map(ci=>cityShort(ci)).join(lang==='cn'?'、':', ');
+  if(o.big)h+='<br><b>'+(o.dive?TR('big'):TR('high'))+':</b> '+esc(o.big);
+  if(o.season)h+='<br><b>'+TR('season')+':</b> '+esc(o.season);
+  if(o.who&&o.who.length)h+='<br><b>'+TR('withw')+':</b> '+o.who.map(esc).join('、');
+  if(isCountry&&o.tanks&&TANKS.m[o.id])h+='<br><b>'+TR('tanks')+':</b> '+TR('tankf')(TANKS.m[o.id].trip,TANKS.m[o.id].cum);
+  if(isCountry&&o.tag)h+='<br><b>'+TR('note')+':</b> '+esc(o.tag);
+  return h;
+}
+function infoLines(o){let s='';if(o.big)s+='<br><b>'+(o.dive?TR('big'):TR('high'))+':</b> '+esc(o.big);if(o.season)s+='<br><b>'+TR('season')+':</b> '+esc(o.season);if(o.who&&o.who.length)s+='<br><b>'+TR('withw')+':</b> '+o.who.map(esc).join('、');return s;}
+function popupHtml(c,ci){return `<div class="pop"><b>${ci.dive?'🤿 ':(ci.act?ci.act+' ':'')}${cityDisp(ci)}</b><br><span style="color:#888;font-size:12px">${stLabel(ci.status)}${ci.date?' · '+esc(ci.date):''}</span>${infoLines(ci)}<div class="r"><button onclick="toggleCity('${c.id}','${ci.id}')">⇄</button><button onclick="dateCity('${c.id}','${ci.id}')">🗓</button><button onclick="renameCity('${c.id}','${ci.id}')">✎</button><button onclick="delCity('${c.id}','${ci.id}')">✕</button></div></div>`;}
+function countryPopupHtml(c){return '<div class="pop">'+tip(c,true)+'<div class="r"><button onclick="goCountry(\''+c.id+'\')">📍 '+(lang==='cn'?'看城市':'Cities')+'</button></div></div>';}
+window.goCountry=function(id){const c=data.find(x=>x.id===id);if(c){map.closePopup();map.flyTo([c.lat,c.lng],Math.max(ZT,6),{duration:.6});}};
+
+function nearestCountry(){
+  const ctr=map.getCenter();let best=null,bd=1e9;
+  data.filter(peopleMatch).forEach(c=>{const dy=c.lat-ctr.lat,dx=(c.lng-ctr.lng)*Math.cos(ctr.lat*Math.PI/180);const d=dy*dy+dx*dx;if(d<bd){bd=d;best=c;}});
+  return best;
+}
+function render(force){
+  TANKS=tankInfo();
+  updateGeo();
+  if(catSel.size>0){
+    if(curKey==='__f__'&&!force)return;
+    curKey='__f__';clearMarkers();
+    const pts=[];
+    data.forEach(c=>{
+      if(catSel.has(catOf(c))&&peopleMatch(c)){
+        const m=mkLayer(c).addTo(map);
+        m.bindTooltip(tip(c,true),{sticky:true,direction:'top',className:'info'});
+        m.bindPopup(countryPopupHtml(c));
+        markers[c.id]=m;pts.push([c.lat,c.lng]);
+      }
+      (c.cities||[]).forEach(ci=>{
+        if(catSel.has(catOf(ci))&&(peopleMatch(ci)||peopleMatch(c))){
+          const m=mkLayer(ci).addTo(map);
+          m.bindTooltip(tip(ci,false),{sticky:true,direction:'top',className:'info'});
+          m.bindPopup(popupHtml(c,ci));
+          markers[ci.id]=m;pts.push([ci.lat,ci.lng]);
+        }
+      });
+    });
+    document.getElementById('hint').innerHTML=TR('filtered');
+    if(force&&pts.length)map.fitBounds(pts,{padding:[60,60],maxZoom:6});
+    renderStats();return;
+  }
+  const z=map.getZoom();
+  if(z<ZT){
+    if(curKey==='__c__'&&!force)return;
+    curKey='__c__';clearMarkers();
+    data.filter(peopleMatch).forEach(c=>{
+      const m=mkLayer(c).addTo(map);
+      m.bindTooltip(tip(c,true),{sticky:true,direction:'top',className:'info'});
+      m.bindPopup(countryPopupHtml(c));
+      markers[c.id]=m;
+    });
+    document.getElementById('hint').innerHTML=TR('hintC');
+  }else{
+    const c=nearestCountry();const k=c?c.id:'__none__';
+    if(curKey===k&&!force)return;
+    curKey=k;clearMarkers();
+    if(c)(c.cities||[]).filter(peopleMatch).forEach(ci=>{
+      const m=mkLayer(ci).addTo(map);
+      m.bindTooltip(tip(ci,false),{sticky:true,direction:'top',className:'info'});
+      m.bindPopup(popupHtml(c,ci));
+      markers[ci.id]=m;
+    });
+    document.getElementById('hint').innerHTML=c?('<b>'+(c.flag?c.flag+' ':'')+cName(c)+'</b>'+TR('backInfo')+((c.cities&&c.cities.length)?'':' '+TR('cityTodo'))):TR('hintC');
+  }
+  renderStats();
+}
+function renderSide(){
+  document.getElementById('sideHead').innerHTML='<h2>'+TR('countries')+'</h2>';
+  const el=document.getElementById('list');el.innerHTML='';
+  data.filter(countryHasMatch).slice().sort((a,b)=>(a.status>b.status?1:-1)||a.name.localeCompare(b.name)).forEach(c=>{
+    const d=document.createElement('div');d.className='row2';
+    const dot=c.dive?'🤿':`<i class="dot ${c.status}"></i>`;
+    d.innerHTML=`${dot}<span class="nm">${(c.flag?c.flag+' ':'')+cName(c)}</span>${c.date?'<span style="color:#9aa3b2;font-size:11px;margin-right:4px">'+esc(c.date)+'</span>':''}<button class="mini" title="toggle">⇄</button>`;
+    d.querySelector('.nm').onclick=()=>map.flyTo([c.lat,c.lng],Math.max(ZT,6),{duration:.6});
+    d.querySelector('.mini').onclick=(e)=>{e.stopPropagation();c.status=c.status==='visited'?'soon':(c.status==='soon'?'planned':'visited');save();render(true);renderSide();};
+    el.appendChild(d);
+  });
+}
+window.toggleCity=function(cid,ciid){const c=data.find(x=>x.id===cid);const ci=c&&c.cities.find(y=>y.id===ciid);if(!ci)return;ci.status=ci.status==='visited'?'soon':(ci.status==='soon'?'planned':'visited');save();render(true);};
+window.renameCity=function(cid,ciid){const c=data.find(x=>x.id===cid);const ci=c&&c.cities.find(y=>y.id===ciid);if(!ci)return;const n=prompt('Name:',ci.name);if(n!==null&&n.trim()){ci.name=n.trim();save();render(true);}};
+window.delCity=function(cid,ciid){const c=data.find(x=>x.id===cid);if(!c)return;c.cities=c.cities.filter(y=>y.id!==ciid);save();render(true);};
+window.dateCity=function(cid,ciid){const c=data.find(x=>x.id===cid);const ci=c&&c.cities.find(y=>y.id===ciid);if(!ci)return;const d=prompt('Time (e.g. 2026.05):',ci.date||'');if(d!==null){ci.date=d.trim();save();render(true);}};
+
+function renderStats(){
+  const v=data.filter(c=>c.status==='visited').length,s=data.filter(c=>c.status==='soon').length,p=data.filter(c=>c.status==='planned').length,dv=data.filter(c=>c.dive).length;
+  document.getElementById('stats').innerHTML=TR('statsfmt')(v,s,p,dv,TANKS.total);
+  updateTankBar();
+}
+function peopleCounts(){const m={};data.forEach(c=>{const set=new Set([...(c.who||[])]);(c.cities||[]).forEach(ci=>(ci.who||[]).forEach(p=>set.add(p)));set.forEach(p=>m[p]=(m[p]||0)+1);});return m;}
+function renderPeople(){
+  const box=document.getElementById('people');box.innerHTML='';
+  const cnt=peopleCounts();
+  Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||a.localeCompare(b)).forEach(p=>{
+    const b=document.createElement('button');b.className='chip'+(peopleSel.has(p)?' sel':'');b.textContent=p+' '+cnt[p];
+    b.onclick=()=>{if(peopleSel.has(p))peopleSel.delete(p);else peopleSel.add(p);b.classList.toggle('sel',peopleSel.has(p));render(true);renderSide();};
+    box.appendChild(b);
+  });
+}
+const BD=new Date(1998,4,19);
+function updateAge(){
+  const now=new Date();let y=now.getFullYear()-1998,m=now.getMonth()-4,d=now.getDate()-19;
+  if(d<0){m--;d+=new Date(now.getFullYear(),now.getMonth(),0).getDate();}
+  if(m<0){y--;m+=12;}
+  const el=document.getElementById('ageCounter');if(el)el.innerHTML=TR('agefmt')(y,m,d);
+}
+function updateTankBar(){
+  const el=document.getElementById('tankBar');if(!el)return;
+  const t=(TANKS&&TANKS.total)||0;const h=Math.floor(t/100);const within=t-h*100;const next=(h+1)*100;
+  const cap=(lang==='cn'?'🤿 百瓶进度':'🤿 Toward 100')+(h>0?' 🎉×'+h:'');
+  el.innerHTML='<div class="lab"><span>'+cap+'</span><b>'+t+' / '+next+'</b></div><div class="track"><div class="fill" style="width:'+within+'%"></div></div>';
+}
+
+function applyLang(){
+  document.getElementById('titleTxt').textContent=TR('title');
+  const mo=document.getElementById('motto');if(mo)mo.textContent=TR('motto')?'— '+TR('motto'):'';
+  document.getElementById('worldBtn').textContent=TR('world');
+  document.getElementById('chinaBtn').textContent=TR('china');
+  document.getElementById('langBtn').textContent=TR('lang');
+  document.getElementById('exportBtn').textContent=TR('exp');
+  document.getElementById('importBtn').textContent=TR('imp');
+  document.getElementById('shotBtn').textContent=TR('shot');
+  document.getElementById('pplHead').textContent=TR('ppl');
+  document.getElementById('peopleAll').textContent=TR('showall');
+  const pt=document.getElementById('peopleToggle');pt.textContent=(document.getElementById('people').style.display==='none')?TR('show'):TR('hide');
+  const lab={visited:'<i class="dot visited"></i>'+TR('visited'),soon:'<i class="dot soon"></i>'+TR('soon'),planned:'<i class="dot planned"></i>'+TR('wishlist'),'🤿':'🤿 '+TR('diving'),'🪂':'🪂 '+TR('skydiving'),'🐴':'🐴 '+TR('horse'),'🌌':'🌌 '+TR('aurora'),'🌠':'🌠 '+TR('meteor'),'🔭':'🔭 '+TR('stargazing')};
+  document.querySelectorAll('#legend .chip').forEach(ch=>{ch.innerHTML=lab[ch.dataset.cat]||ch.dataset.cat;ch.classList.toggle('sel',catSel.has(ch.dataset.cat));});
+  updateAge();renderPeople();renderSide();render(true);
+}
+
+map.on('zoomend',()=>render());
+map.on('moveend',()=>render());
+let hoverTimer=null,hoverPop=null,lastLL=null;
+map.on('mousemove',e=>{if(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches)return;lastLL=e.latlng;if(hoverTimer)clearTimeout(hoverTimer);hoverTimer=setTimeout(showHoverName,1000);});
+map.on('mouseout',()=>{if(hoverTimer)clearTimeout(hoverTimer);if(hoverPop){map.closePopup(hoverPop);hoverPop=null;}});
+map.on('movestart zoomstart',()=>{if(hoverTimer)clearTimeout(hoverTimer);if(hoverPop){map.closePopup(hoverPop);hoverPop=null;}});
+function showHoverName(){
+  if(!lastLL)return;const ll=lastLL;
+  const cp=map.latLngToContainerPoint(ll);
+  for(const id in markers){const ml=markers[id];if(ml&&ml.getLatLng){const p=map.latLngToContainerPoint(ml.getLatLng());if(Math.hypot(p.x-cp.x,p.y-cp.y)<26)return;}}
+  const z=Math.min(10,Math.max(3,Math.round(map.getZoom())));
+  fetch('https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat='+ll.lat+'&lon='+ll.lng+'&zoom='+z+'&accept-language='+(lang==='cn'?'zh':'en')).then(r=>r.json()).then(j=>{
+    const nm=j&&(j.name||j.display_name);if(!nm)return;
+    if(hoverPop)map.closePopup(hoverPop);
+    hoverPop=L.popup({closeButton:false,autoClose:false,closeOnClick:false}).setLatLng(ll).setContent('<span style="font-size:12px">'+nm.split(',').slice(0,2).join(', ')+'</span>').openOn(map);
+  }).catch(()=>{});
+}
+document.getElementById('worldBtn').onclick=()=>map.flyTo([25,30],2,{duration:.6});
+document.getElementById('chinaBtn').onclick=()=>map.flyTo([35,103],5,{duration:.6});
+document.getElementById('langBtn').onclick=()=>{lang=lang==='cn'?'en':'cn';applyLang();};
+document.getElementById('themeBtn').onclick=()=>setTheme(theme==='day'?'night':'day');
+document.querySelectorAll('#legend .chip').forEach(ch=>{ch.onclick=()=>{const c=ch.dataset.cat;if(catSel.has(c))catSel.delete(c);else catSel.add(c);ch.classList.toggle('sel',catSel.has(c));render(true);renderSide();};});
+document.getElementById('peopleAll').onclick=()=>{peopleSel.clear();renderPeople();render(true);renderSide();};
+document.getElementById('peopleToggle').onclick=function(){const box=document.getElementById('people');const hidden=box.style.display==='none';box.style.display=hidden?'flex':'none';this.textContent=hidden?TR('hide'):TR('show');};
+document.getElementById('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='travel-map.json';a.click();};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=ev=>{const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){data=d;save();applyLang();}}catch(e){alert('Bad file format');}};r.readAsText(f);};
+document.getElementById('shotBtn').onclick=function(){
+  const btn=this,orig=btn.textContent;btn.textContent='⏳';
+  const go=()=>{
+    const bg=getComputedStyle(document.body).getPropertyValue('--bg').trim()||'#0f1115';
+    window.html2canvas(document.getElementById('app'),{useCORS:true,backgroundColor:bg,logging:false,scale:2}).then(cv=>{
+      cv.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='travel-map-'+Date.now()+'.png';a.click();btn.textContent=orig;});
+    }).catch(e=>{btn.textContent=orig;alert((lang==='cn'?'截图失败：':'Screenshot failed: ')+e);});
+  };
+  if(window.html2canvas){go();return;}
+  const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+  s.onload=go;s.onerror=()=>{btn.textContent=orig;alert(lang==='cn'?'截图库未能加载（需要联网）':'Screenshot library failed to load (needs internet)');};
+  document.head.appendChild(s);
+};
+
+applyLang();
+</script>
+</body>
+</html>
