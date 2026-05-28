@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>地球存活日记 · Earth Survival Diary</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 <style>
@@ -120,6 +123,7 @@
 <script>
 const KEY='travelMapData_v11';
 const catSel=new Set(), peopleSel=new Set();
+const IS_TOUCH=!!(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches);
 let lang='cn';
 const T={
  cn:{title:'地球存活日记',motto:'今天比昨天更自由',world:'🌍 世界',china:'🇨🇳 中国',lang:'EN',exp:'导出',imp:'导入',shot:'📷 截图',
@@ -137,6 +141,7 @@ const T={
    tanks:'Tanks',tankf:(t,c)=>t+' this trip → '+c+' total',note:'Note',filtered:'Filtered: only selected categories / activities (click chip again to clear)',
    agefmt:(y,m,d)=>'<b>'+y+'</b>y <b>'+m+'</b>m <b>'+d+'</b>d',statsfmt:(v,s,p,dv,tk)=>`Places: visited <b>${v}</b> · upcoming <b>${s}</b> · wishlist <b>${p}</b> · dive <b>${dv}</b> 🤿 · <b>${tk}</b> tanks`}
 };
+if(IS_TOUCH){T.cn.hintC='点一下地图，有惊喜 ✨（放大看城市，点图例 / 同行可筛选）';T.en.hintC='Tap the map — surprises await ✨ (zoom in for cities; filter via legend / companions)';}
 function TR(k){return T[lang][k];}
 // name=EN, cn=中文. Countries also have flag, geo(GeoJSON name). who=同行. date. act=活动符号. tanks. tag.
 const seed=[
@@ -449,6 +454,7 @@ map.on('moveend',()=>render());
 let hoverTimer=null,hoverPop=null,lastLL=null;
 map.on('mousemove',e=>{if(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches)return;lastLL=e.latlng;if(hoverTimer)clearTimeout(hoverTimer);hoverTimer=setTimeout(showHoverName,1000);});
 map.on('mouseout',()=>{if(hoverTimer)clearTimeout(hoverTimer);if(hoverPop){map.closePopup(hoverPop);hoverPop=null;}});
+map.on('click',e=>{if(!IS_TOUCH)return;lastLL=e.latlng;if(hoverPop){map.closePopup(hoverPop);hoverPop=null;}showHoverName();});
 map.on('movestart zoomstart',()=>{if(hoverTimer)clearTimeout(hoverTimer);if(hoverPop){map.closePopup(hoverPop);hoverPop=null;}});
 function showHoverName(){
   if(!lastLL)return;const ll=lastLL;
@@ -507,7 +513,6 @@ applyLang();
     <textarea id="gMsg" placeholder="写点什么…" maxlength="500"></textarea>
     <button class="gbbtn" id="gSendBtn">发送</button>
     <div id="gbMsgResult" style="font-size:13px;margin:6px 0;min-height:18px"></div>
-    <div id="gbList" style="margin-top:10px"></div>
   </div>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -524,10 +529,9 @@ applyLang();
   $('gbCloseBtn').onclick=function(){$('gbModal').classList.remove('show');};
   $('gbModal').onclick=function(e){if(e.target===$('gbModal'))$('gbModal').classList.remove('show');};
   function visits(){ if(!sb)return; sb.rpc('bump_visits').then(function(r){ if(r&&r.data!=null)$('gbVisits').textContent='👀 第 '+r.data+' 位访客'; }).catch(function(){}); }
-  function loadList(){ if(!sb)return; sb.from('guestbook').select('nickname,message,correct,created_at').order('created_at',{ascending:false}).limit(50).then(function(r){
-      var el=$('gbList'); el.innerHTML=''; (r.data||[]).forEach(function(m){var d=document.createElement('div');d.className='gbi';var t=new Date(m.created_at).toLocaleDateString();d.innerHTML='<span class="t">'+t+'</span><span class="who">'+esc(m.nickname||'匿名')+(m.correct?' 🎉':'')+'</span><br>'+esc(m.message);el.appendChild(d);}); }).catch(function(){}); }
+  function loadList(){} // 留言只收集、不在网站上公开展示（可在 Supabase 后台查看）
   $('gSendBtn').onclick=function(){ if(!sb){$('gbMsgResult').textContent='未连接数据库';return;} var msg=$('gMsg').value.trim(); if(!msg){$('gbMsgResult').textContent='写点什么吧～';return;} $('gbMsgResult').textContent='发送中…'; sb.from('guestbook').insert({nickname:($('gNick').value.trim()||null),message:msg}).then(function(r){ if(r.error){$('gbMsgResult').textContent='发送失败';} else {$('gMsg').value='';$('gbMsgResult').textContent='已发送 ✅';loadList();} }); };
-  $('gGuessBtn').onclick=function(){ if(!sb)return; var name=$('gName').value.trim(); var guess=sel.value; if(!name){$('gGuessResult').textContent='先写下你的名字～';return;} $('gGuessResult').textContent='验证中…'; sb.rpc('check_guess',{p_name:name,p_guess:guess}).then(function(r){ if(r.data===true){$('gGuessResult').textContent='🎉 猜对啦！就是你！';fireworks(); sb.from('guestbook').insert({nickname:name,message:'（猜中了自己是 '+guess+'）',guessed_alias:guess,correct:true}).then(loadList);} else {$('gGuessResult').textContent='❌ 不是哦，再猜猜～';} }).catch(function(){$('gGuessResult').textContent='出错了';}); };
+  $('gGuessBtn').onclick=function(){ if(!sb)return; var name=$('gName').value.trim(); var guess=sel.value; if(!name){$('gGuessResult').textContent='先写下你的名字～';return;} $('gGuessResult').textContent='验证中…'; sb.rpc('check_guess',{p_name:name,p_guess:guess}).then(function(r){ if(r.data===true){$('gGuessResult').textContent='🎉 猜对啦！就是你！';fireworks();} else {$('gGuessResult').textContent='❌ 不是哦，再猜猜～';} }).catch(function(){$('gGuessResult').textContent='出错了';}); };
   function fireworks(){ var c=$('fw');c.style.display='block';c.width=innerWidth;c.height=innerHeight;var ctx=c.getContext('2d');var ps=[];function burst(x,y){var n=60,hue=Math.random()*360;for(var i=0;i<n;i++){var a=Math.PI*2*i/n,sp=2+Math.random()*4;ps.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:70+Math.random()*30,c:'hsl('+hue+',90%,62%)'});}}
     for(var k=0;k<5;k++){(function(k){setTimeout(function(){burst(innerWidth*(0.2+Math.random()*0.6),innerHeight*(0.2+Math.random()*0.4));},k*260);})(k);}
     var frames=0;(function loop(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=0.04;p.life--;ctx.globalAlpha=Math.max(0,p.life/90);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,2.6,0,7);ctx.fill();});ps=ps.filter(function(p){return p.life>0;});frames++;if(frames<210&&(ps.length||frames<150))requestAnimationFrame(loop);else{ctx.clearRect(0,0,c.width,c.height);c.style.display='none';}})(); }
