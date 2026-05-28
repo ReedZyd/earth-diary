@@ -42,6 +42,11 @@
   .chip:hover{border-color:var(--accent)}
   .chip.sel{background:var(--accent);color:#0b1020;border-color:var(--accent);font-weight:600}
   .chip .dot{width:9px;height:9px}
+  .ychips{display:flex;flex-wrap:wrap;gap:4px;margin:6px 4px 0;border-top:1px solid var(--line);padding-top:8px}
+  .ychip{border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:12px;color:var(--text);cursor:pointer;background:var(--chipbg);transition:transform .1s}
+  .ychip:hover{transform:translateY(-1px)}
+  .ychip.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);font-weight:600}
+  .ychip sub{margin-left:3px;font-size:9px;opacity:.7;vertical-align:baseline;font-weight:400}
   .secthead{display:flex;align-items:center;gap:8px;margin:8px 4px 4px;border-top:1px solid var(--line);padding-top:8px}
   .secthead span{font-size:13px;color:var(--muted);font-weight:600;flex:1}
   .row2{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;border:1px solid transparent}
@@ -114,7 +119,7 @@
         <button class="chip" data-cat="🌠"></button>
         <button class="chip" data-cat="🔭"></button>
       </div>
-      <div class="secthead" style="gap:6px"><span style="flex:none;font-size:13px">📅</span><select id="yearSelEl" style="flex:1 1 auto;width:100%;background:var(--chipbg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:5px 8px;font-size:13px;cursor:pointer"></select></div>
+      <div class="ychips" id="yearChips"></div>
       <div class="secthead"><span id="pplHead"></span><button class="mini" id="peopleAll"></button><button class="mini" id="peopleToggle"></button></div>
       <div class="legend" id="people"></div>
       <div id="sideHead"></div>
@@ -487,7 +492,9 @@ function plannedProvinces(){const set=new Set();const cn=data.find(c=>c.id==='cn
 let yearSel='all';
 function getYears(){const yrs=new Set();const re=/(19|20)\d{2}/g;function add(s){if(!s)return;(s.match(re)||[]).forEach(y=>yrs.add(y));}data.forEach(c=>{add(c.date);(c.visits||[]).forEach(v=>add(v.date));(c.cities||[]).forEach(ci=>{add(ci.date);(ci.visits||[]).forEach(v=>add(v.date));});});return [...yrs].sort();}
 function yearMatch(o){if(yearSel==='all')return true;const re=/(19|20)\d{2}/g;function hasYr(s){return s&&(s.match(re)||[]).indexOf(yearSel)>=0;}if(hasYr(o.date))return true;if((o.visits||[]).some(v=>hasYr(v.date)))return true;if((o.cities||[]).some(ci=>hasYr(ci.date)||(ci.visits||[]).some(v=>hasYr(v.date))))return true;return false;}
-function renderYearDropdown(){const el=document.getElementById('yearSelEl');if(!el)return;const yrs=getYears();const cur=yearSel;el.innerHTML='<option value="all">'+(lang==='cn'?'全部年份':'All years')+'</option>'+yrs.map(y=>'<option value="'+y+'"'+(y===cur?' selected':'')+'>'+y+'</option>').join('');el.value=cur;}
+function yearCounts(){const m={};function add(s){if(!s)return;(s.match(/(19|20)\d{2}/g)||[]).forEach(y=>{m[y]=(m[y]||0)+1;});}data.filter(inView).forEach(c=>{add(c.date);(c.visits||[]).forEach(v=>add(v.date));(c.cities||[]).forEach(ci=>{add(ci.date);(ci.visits||[]).forEach(v=>add(v.date));});});return m;}
+function renderYearChips(){const el=document.getElementById('yearChips');if(!el)return;const counts=yearCounts();const yrs=Object.keys(counts).sort();const maxC=Math.max(1,...Object.values(counts));const allLbl=(lang==='cn'?'全部':'All');let html='<button class="ychip '+(yearSel==='all'?'sel':'')+'" data-y="all">'+allLbl+'</button>';yrs.forEach(y=>{const c=counts[y];const a=(c/maxC)*0.6+0.12;const sel=yearSel===y?'sel':'';html+='<button class="ychip '+sel+'" data-y="'+y+'" style="background:rgba(255,140,40,'+a.toFixed(2)+')">'+y+'<sub>'+c+'</sub></button>';});el.innerHTML=html;el.querySelectorAll('.ychip').forEach(function(b){b.onclick=function(){yearSel=this.dataset.y;renderYearChips();render(true);renderSide();renderPeople();renderStats();};});}
+function renderYearDropdown(){renderYearChips();}
 let chinaGeoLayer=null;
 fetch('https://cdn.jsdelivr.net/gh/longwosion/geojson-map-china@master/china.json').then(r=>r.json()).then(gj=>{
   chinaGeoLayer=L.geoJSON(gj,{interactive:true,style:f=>{
@@ -697,8 +704,8 @@ function showHoverName(){
     hoverPop=L.popup({closeButton:false,autoClose:false,closeOnClick:false}).setLatLng(ll).setContent('<span style="font-size:12px">'+nm.split(',').slice(0,2).join(', ')+'</span>').openOn(map);
   }).catch(()=>{});
 }
-document.getElementById('worldBtn').onclick=()=>{viewMode='world';map.flyTo([25,30],2,{duration:.6});updateGeo();render(true);renderSide();renderPeople();renderStats();updateChipActive();};
-document.getElementById('chinaBtn').onclick=()=>{viewMode='china';map.flyToBounds([[18,73],[53,135]],{padding:innerWidth<680?[8,8]:[30,30],maxZoom:innerWidth<680?4:5,duration:.8});updateGeo();render(true);renderSide();renderPeople();renderStats();updateChipActive();};
+document.getElementById('worldBtn').onclick=()=>{viewMode='world';map.flyTo([25,30],2,{duration:.6});updateGeo();render(true);renderSide();renderPeople();renderStats();renderYearChips();updateChipActive();};
+document.getElementById('chinaBtn').onclick=()=>{viewMode='china';map.flyToBounds([[18,73],[53,135]],{padding:innerWidth<680?[8,8]:[30,30],maxZoom:innerWidth<680?4:5,duration:.8});updateGeo();render(true);renderSide();renderPeople();renderStats();renderYearChips();updateChipActive();};
 function updateChipActive(){document.getElementById('worldBtn').classList.toggle('active',viewMode==='world');document.getElementById('chinaBtn').classList.toggle('active',viewMode==='china');}
 updateChipActive();
 document.getElementById('langBtn').onclick=()=>{lang=lang==='cn'?'en':'cn';applyLang();setTheme(theme);};
@@ -722,7 +729,7 @@ document.getElementById('shotBtn').onclick=function(){
 };
 
 applyLang();
-var __yel=document.getElementById('yearSelEl');if(__yel)__yel.onchange=function(){yearSel=this.value;render(true);renderSide();renderPeople();renderStats();};
+
 (function(){var pt=document.getElementById('pokeTip');if(pt){pt.textContent=TR('poke');pt.classList.add('show');var h=function(){pt.classList.remove('show');};pt.onclick=h;setTimeout(h,5200);}})();
 </script>
 
