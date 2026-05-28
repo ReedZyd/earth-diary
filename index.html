@@ -329,7 +329,12 @@ let tileLayer=null, theme='day';
 function setTheme(t){
   theme=t;document.body.classList.toggle('day',t==='day');
   if(tileLayer){map.removeLayer(tileLayer);tileLayer=null;}
-  tileLayer=L.tileLayer(t==='day'?'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png':'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,crossOrigin:true,attribution:'© OpenStreetMap, © CARTO'}).addTo(map);
+  if(lang==='cn'){
+    const url=t==='day'?'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}':'https://wprd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}';
+    tileLayer=L.tileLayer(url,{subdomains:'1234',maxZoom:18,attribution:'© 高德地图'}).addTo(map);
+  }else{
+    tileLayer=L.tileLayer(t==='day'?'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png':'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,crossOrigin:true,attribution:'© OpenStreetMap, © CARTO'}).addTo(map);
+  }
   tileLayer.bringToBack();
   const b=document.getElementById('themeBtn');if(b)b.textContent=(t==='day'?'🌙':'☀️');
 }
@@ -344,6 +349,25 @@ fetch('https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.jso
 }).catch(()=>{});
 // City -> Province (full name to match Chinese GeoJSON)
 const CITY2PROV={'cn_luz':'四川省','cn_bj':'北京市','cn_qd':'山东省','cn_yt':'山东省','cn_ym':'山东省','cn_suz':'江苏省','cn_xsbn':'云南省','cn_mj':'云南省','cn_lj':'云南省','cn_lsh':'四川省','cn_mh':'四川省','cn_zg':'四川省','cn_jia':'四川省','cn_lz':'四川省','cn_jzg':'四川省','cn_ts':'山东省','cn_xf':'贵州省','cn_xqk':'贵州省','cn_zhy':'贵州省','cn_cd':'四川省','cn_nj':'江苏省','cn_wh':'湖北省','cn_cq':'重庆市','cn_jn':'山东省','cn_lw':'山东省','cn_zaz':'山东省','cn_zhq':'山东省','cn_wf':'山东省','cn_sh':'上海市','cn_hz':'浙江省','cn_gz':'广东省','cn_lan':'甘肃省','cn_by':'甘肃省','cn_xa':'陕西省','cn_dh':'甘肃省','cn_dl':'辽宁省','cn_sy':'辽宁省','cn_tj':'天津市','cn_hf':'安徽省','cn_qh':'青海省','cn_xn':'青海省','cn_yic':'黑龙江省','cn_heb':'黑龙江省','cn_tsh':'河北省','cn_sjz':'河北省','cn_hsx':'四川省','cn_hsx_h':'四川省','cn_hsx_s':'四川省','cn_ali':'西藏自治区','cn_xj':'新疆维吾尔自治区'};
+const ALIAS_EN={
+'🌸 妈妈':'🌸 Mom','🌴 爸爸':'🌴 Dad','🌷 外婆':'🌷 Grandma','🍃 小姨':'🍃 Auntie',
+'🐂 二爸':'🐂 Uncle 2','🐉 大伯':'🐉 Uncle Sr','⭐ 周叔叔':'⭐ Uncle Zhou','🦔 黄姑爷':'🦔 Uncle Huang',
+'🐹 仓鼠':'🐹 Hamster','🐼 胖达':'🐼 Panda','🐢 龟龟':'🐢 Turtle','🐝 蜜蜂':'🐝 Bee',
+'🐍 小青':'🐍 Lil Snake','🐌 蜗牛':'🐌 Snail','🦘 跳跳':'🦘 Roo','🐿 松鼠':'🐿 Squirrel',
+'🦝 浣熊':'🦝 Raccoon','🐶 狗子':'🐶 Doggo','🐱 猫咪':'🐱 Kitty','🦜 鹦鹉':'🦜 Parrot',
+'🦞 龙虾':'🦞 Lobster','🐺 灰狼':'🐺 Wolf','🐵 猴子':'🐵 Monkey','🦄 独角兽':'🦄 Unicorn',
+'🐔 小鸡':'🐔 Chick','🐮 牛牛':'🐮 Cow','🐸 青蛙':'🐸 Frog','🦒 长颈':'🦒 Giraffe',
+'🐗 野猪':'🐗 Boar','🦃 火鸡':'🦃 Turkey','🐯 老虎':'🐯 Tiger','🦙 羊驼':'🦙 Alpaca',
+'🦥 树懒':'🦥 Sloth','🪼 水母':'🪼 Jelly','🦤 渡渡':'🦤 Dodo','🦏 犀犀':'🦏 Rhino',
+'🐊 鳄鱼':'🐊 Croc','🦛 河马':'🦛 Hippo','🐘 大象':'🐘 Elephant','🐛 毛虫':'🐛 Caterpillar',
+'🐎 飞马':'🐎 Horse','🐲 小龙':'🐲 Dragon','🦀 螃蟹':'🦀 Crab','🦆 鸭子':'🦆 Duck',
+'🦩 红鹤':'🦩 Flamingo',
+'🐳 小鲸':'🐳 Whale','🦁 狮仔':'🦁 Lion','😺 狮仔':'😺 Lion','🐧 企鹅':'🐧 Penguin',
+'🦉 博士':'🦉 Owl','🐬 海豚':'🐬 Dolphin','🦦 水獭':'🦦 Otter','🇬🇧 英伦喵':'🇬🇧 UK Kitty',
+'🐨 考拉':'🐨 Koala','🦋 蝴蝶':'🦋 Butterfly','❄️ 小雪':'❄️ Snow','🦊 狐狸':'🦊 Fox',
+'🐰 兔兔':'🐰 Bunny','🦌 小鹿':'🦌 Deer','☁️ 云朵':'☁️ Cloud','🌞 小太阳':'🌞 Sunny',
+};
+function displayAlias(a){return lang==='en'&&ALIAS_EN[a]?ALIAS_EN[a]:a;}
 function visitedProvinces(){const set=new Set();const cn=data.find(c=>c.id==='cn');if(cn&&cn.cities)cn.cities.forEach(ci=>{if(ci.status==='visited'&&CITY2PROV[ci.id])set.add(CITY2PROV[ci.id]);});return set;}
 function plannedProvinces(){const set=new Set();const cn=data.find(c=>c.id==='cn');if(cn&&cn.cities)cn.cities.forEach(ci=>{if((ci.status==='planned'||ci.status==='soon')&&CITY2PROV[ci.id])set.add(CITY2PROV[ci.id]);});return set;}
 let chinaGeoLayer=null;
@@ -400,13 +424,13 @@ function tip(o,isCountry){
   if(isCountry&&o.cities&&o.cities.length)h+='<br><b>'+TR('places')+':</b> '+o.cities.map(ci=>cityShort(ci)).join(lang==='cn'?'、':', ');
   if(o.big)h+='<br><b>'+(o.dive?TR('big'):TR('high'))+':</b> '+esc(o.big);
   if(o.season)h+='<br><b>'+TR('season')+':</b> '+esc(o.season);
-  if(o.who&&o.who.length)h+='<br><b>'+TR('withw')+':</b> '+o.who.map(esc).join('、');
+  if(o.who&&o.who.length)h+='<br><b>'+TR('withw')+':</b> '+o.who.map(p=>esc(displayAlias(p))).join('、');
   if(isCountry&&o.tanks&&TANKS.m[o.id])h+='<br><b>'+TR('tanks')+':</b> '+TR('tankf')(TANKS.m[o.id].trip,TANKS.m[o.id].cum);
   if(isCountry&&o.tag)h+='<br><b>'+TR('note')+':</b> '+esc(o.tag);
   return h;
 }
-function infoLines(o){let s='';if(o.big)s+='<br><b>'+(o.dive?TR('big'):TR('high'))+':</b> '+esc(o.big);if(o.season)s+='<br><b>'+TR('season')+':</b> '+esc(o.season);if(o.who&&o.who.length)s+='<br><b>'+TR('withw')+':</b> '+o.who.map(esc).join('、');if(o.tag)s+='<br><b>'+TR('note')+':</b> '+esc(o.tag);return s;}
-function popupHtml(c,ci){let body='';if(ci.surprise){body+='<div style="margin:6px 0;padding:10px;background:linear-gradient(135deg,#ffd47a,#ffb84d);color:#3a2d00;border-radius:10px;font-weight:600;box-shadow:0 3px 10px rgba(255,180,80,.35)">'+esc(ci.surprise)+'</div>';}if(ci.visits&&ci.visits.length){body+='<div style="color:#888;font-size:12px">'+stLabel(ci.status)+'</div>'+ci.visits.map(v=>{let h='🗓 '+esc(v.date||'?');if(v.who&&v.who.length)h+='<br>· '+TR('withw')+': '+v.who.map(esc).join('、');if(v.tag)h+='<br>· '+esc(v.tag);return '<div style="margin:6px 0;padding:4px 8px;border-left:2px solid #6ea8fe;background:rgba(110,168,254,0.07)">'+h+'</div>';}).join('');}else{body+='<span style="color:#888;font-size:12px">'+stLabel(ci.status)+(ci.date?' · '+esc(ci.date):'')+'</span>'+infoLines(ci);}return '<div class="pop"><b>'+(ci.dive?'🤿 ':(ci.act?ci.act+' ':''))+cityDisp(ci)+'</b><br>'+body+'<div class="r"><button onclick="toggleCity(\''+c.id+'\',\''+ci.id+'\')">⇄</button><button onclick="dateCity(\''+c.id+'\',\''+ci.id+'\')">🗓</button><button onclick="renameCity(\''+c.id+'\',\''+ci.id+'\')">✎</button></div></div>';}
+function infoLines(o){let s='';if(o.big)s+='<br><b>'+(o.dive?TR('big'):TR('high'))+':</b> '+esc(o.big);if(o.season)s+='<br><b>'+TR('season')+':</b> '+esc(o.season);if(o.who&&o.who.length)s+='<br><b>'+TR('withw')+':</b> '+o.who.map(p=>esc(displayAlias(p))).join('、');if(o.tag)s+='<br><b>'+TR('note')+':</b> '+esc(o.tag);return s;}
+function popupHtml(c,ci){let body='';if(ci.surprise){body+='<div style="margin:6px 0;padding:10px;background:linear-gradient(135deg,#ffd47a,#ffb84d);color:#3a2d00;border-radius:10px;font-weight:600;box-shadow:0 3px 10px rgba(255,180,80,.35)">'+esc(ci.surprise)+'</div>';}if(ci.visits&&ci.visits.length){body+='<div style="color:#888;font-size:12px">'+stLabel(ci.status)+'</div>'+ci.visits.map(v=>{let h='🗓 '+esc(v.date||'?');if(v.who&&v.who.length)h+='<br>· '+TR('withw')+': '+v.who.map(p=>esc(displayAlias(p))).join('、');if(v.tag)h+='<br>· '+esc(v.tag);return '<div style="margin:6px 0;padding:4px 8px;border-left:2px solid #6ea8fe;background:rgba(110,168,254,0.07)">'+h+'</div>';}).join('');}else{body+='<span style="color:#888;font-size:12px">'+stLabel(ci.status)+(ci.date?' · '+esc(ci.date):'')+'</span>'+infoLines(ci);}return '<div class="pop"><b>'+(ci.dive?'🤿 ':(ci.act?ci.act+' ':''))+cityDisp(ci)+'</b><br>'+body+'<div class="r"><button onclick="toggleCity(\''+c.id+'\',\''+ci.id+'\')">⇄</button><button onclick="dateCity(\''+c.id+'\',\''+ci.id+'\')">🗓</button><button onclick="renameCity(\''+c.id+'\',\''+ci.id+'\')">✎</button></div></div>';}
 function countryPopupHtml(c){return '<div class="pop">'+tip(c,true)+'<div class="r"><button onclick="goCountry(\''+c.id+'\')">📍 '+(lang==='cn'?'看城市':'Cities')+'</button></div></div>';}
 window.goCountry=function(id){const c=data.find(x=>x.id===id);if(c){map.closePopup();map.flyTo([c.lat,c.lng],Math.max(ZT,6),{duration:.6});}};
 
@@ -502,7 +526,7 @@ function renderPeople(){
   const box=document.getElementById('people');box.innerHTML='';
   const cnt=peopleCounts();
   Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a]||a.localeCompare(b)).forEach(p=>{
-    const b=document.createElement('button');b.className='chip'+(peopleSel.has(p)?' sel':'');b.textContent=p+' '+cnt[p];
+    const b=document.createElement('button');b.className='chip'+(peopleSel.has(p)?' sel':'');b.textContent=displayAlias(p)+' '+cnt[p];
     b.onclick=()=>{if(peopleSel.has(p))peopleSel.delete(p);else peopleSel.add(p);b.classList.toggle('sel',peopleSel.has(p));render(true);renderSide();};
     box.appendChild(b);
   });
@@ -535,7 +559,7 @@ function applyLang(){
   const pt=document.getElementById('peopleToggle');pt.textContent=(document.getElementById('people').style.display==='none')?TR('show'):TR('hide');
   const lab={visited:'<i class="dot visited"></i>'+TR('visited'),soon:'<i class="dot soon"></i>'+TR('soon'),planned:'<i class="dot planned"></i>'+TR('wishlist'),'🤿':'🤿 '+TR('diving'),'🪂':'🪂 '+TR('skydiving'),'🐴':'🐴 '+TR('horse'),'🌌':'🌌 '+TR('aurora'),'🌠':'🌠 '+TR('meteor'),'🔭':'🔭 '+TR('stargazing')};
   document.querySelectorAll('#legend .chip').forEach(ch=>{ch.innerHTML=lab[ch.dataset.cat]||ch.dataset.cat;ch.classList.toggle('sel',catSel.has(ch.dataset.cat));});
-  updateAge();renderPeople();renderSide();render(true);
+  updateAge();renderPeople();renderSide();render(true);var __sel=document.getElementById('gAlias');if(__sel)Array.from(__sel.options).forEach(o=>o.textContent=displayAlias(o.value));
 }
 
 map.on('zoomend',()=>render());
@@ -560,7 +584,7 @@ document.getElementById('worldBtn').onclick=()=>{viewMode='world';map.flyTo([25,
 document.getElementById('chinaBtn').onclick=()=>{viewMode='china';map.flyTo([35,103],5,{duration:.6});updateGeo();render(true);renderSide();renderPeople();renderStats();updateChipActive();};
 function updateChipActive(){document.getElementById('worldBtn').classList.toggle('active',viewMode==='world');document.getElementById('chinaBtn').classList.toggle('active',viewMode==='china');}
 updateChipActive();
-document.getElementById('langBtn').onclick=()=>{lang=lang==='cn'?'en':'cn';applyLang();};
+document.getElementById('langBtn').onclick=()=>{lang=lang==='cn'?'en':'cn';applyLang();setTheme(theme);};
 document.getElementById('themeBtn').onclick=()=>setTheme(theme==='day'?'night':'day');
 document.querySelectorAll('#legend .chip').forEach(ch=>{ch.onclick=()=>{const c=ch.dataset.cat;if(catSel.has(c))catSel.delete(c);else catSel.add(c);ch.classList.toggle('sel',catSel.has(c));render(true);renderSide();};});
 document.getElementById('peopleAll').onclick=()=>{peopleSel.clear();renderPeople();render(true);renderSide();};
@@ -616,7 +640,7 @@ applyLang();
   var sb=null; try{ sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){}
   function $(id){return document.getElementById(id);}
   function esc(s){return (s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  var sel=$('gAlias'); ALIASES.forEach(function(a){var o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});
+  var sel=$('gAlias'); ALIASES.forEach(function(a){var o=document.createElement('option');o.value=a;o.textContent=displayAlias(a);sel.appendChild(o);});
   $('gbFab').onclick=function(){$('gbModal').classList.add('show');loadList();};
   $('gbCloseBtn').onclick=function(){$('gbModal').classList.remove('show');};
   $('gbModal').onclick=function(e){if(e.target===$('gbModal'))$('gbModal').classList.remove('show');};
