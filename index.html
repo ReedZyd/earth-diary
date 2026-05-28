@@ -96,9 +96,7 @@
     <div class="stats" id="stats"></div>
     <div class="spacer"></div>
     <button class="btn" id="exportBtn"></button>
-    <button class="btn" id="importBtn"></button>
     <button class="btn" id="shotBtn"></button>
-    <input type="file" id="importFile" accept="application/json" style="display:none" />
   </header>
   <div class="hint" id="hint"></div>
   <div id="pokeTip"></div>
@@ -155,11 +153,11 @@ const seed=[
    {id:'nl2',name:'Eindhoven',cn:'埃因霍温',lat:51.4416,lng:5.4697,status:'visited'}]},
  {id:'de',name:'Germany (details later)',cn:'德国（城市待补）',flag:'🇩🇪',lat:51.10,lng:10.40,status:'visited',geo:'Germany',cities:[]},
  {id:'be',name:'Belgium (details later)',cn:'比利时（城市待补）',flag:'🇧🇪',lat:50.64,lng:4.67,status:'visited',geo:'Belgium',cities:[]},
- {id:'cn',name:'China',cn:'中国',flag:'🇨🇳',lat:35.00,lng:103.00,status:'visited',geo:'China',who:['🌸 妈妈','🐹 仓鼠','🐼 胖达','🌷 外婆','🍃 小姨','🌴 爸爸','🐢 龟龟','🐝 蜜蜂','🐍 小青','🐌 蜗牛','🦘 跳跳','🐂 二爸','🦔 黄姑爷','🐉 大伯','🐿 松鼠','🦛 河马','🦝 浣熊','🐶 狗子','🐱 猫咪','🦜 鹦鹉','🐘 大象','🦞 龙虾','⭐ 周叔叔','🦀 螃蟹','😺 狮仔','🐺 灰狼','🐵 猴子','🐲 小龙','🦄 独角兽','🐔 小鸡','🐮 牛牛','🐸 青蛙','🦒 长颈','🐎 飞马','🐗 野猪','🦃 火鸡','🐯 老虎','🪼 水母','🦆 鸭子','🐧 企鹅','🦙 羊驼','🐛 毛虫','🦥 树懒','🦤 渡渡','🦏 犀犀','🐊 鳄鱼','🦩 红鹤'],cities:[
+ {id:'cn',name:'China',cn:'中国',flag:'🇨🇳',lat:35.00,lng:103.00,status:'visited',geo:'China',who:['🌸 妈妈','🐹 仓鼠','🐼 胖达','🌷 外婆','🍃 小姨','🌴 爸爸','🐢 龟龟','🐝 蜜蜂','🐍 小青','🐌 蜗牛','🦘 跳跳','🐂 二爸','🦔 黄姑爷','🐉 大伯','🐿 松鼠','🦛 河马','🦝 浣熊','🐶 狗子','🐱 猫咪','🦜 鹦鹉','🐘 大象','🦞 龙虾','⭐ 周叔叔','🦀 螃蟹','😺 狮仔','🐺 灰狼','🐵 猴子','🐲 小龙','🦄 独角兽','🐔 小鸡','🐮 牛牛','🐸 青蛙','🦒 长颈','🐎 飞马','🐗 野猪','🦃 火鸡','🐯 老虎','🪼 水母','🦆 鸭子','🐧 企鹅','🦙 羊驼','🐛 毛虫','🦥 树懒','🦤 渡渡','🦏 犀犀','🐊 鳄鱼','🦩 红鹤','🐙 章鱼','🦫 海狸','🐩 卷毛'],cities:[
    {id:'cn_luz',name:'Luzhou',cn:'泸州',lat:28.8717,lng:105.4422,status:'visited',date:'1998–2015',tag:'家乡'},
-   {id:'cn_bj',name:'Beijing',cn:'北京',lat:39.9042,lng:116.4074,status:'visited',who:['🌸 妈妈','🐹 仓鼠','🦤 渡渡'],visits:[{date:'2012.08',tag:'转机首游颐和园'},{date:'2018',who:['🌸 妈妈','🐹 仓鼠']},{date:'2024.03–09',who:['🦤 渡渡'],tag:'微软实习'}]},
+   {id:'cn_bj',name:'Beijing',cn:'北京',lat:39.9042,lng:116.4074,status:'visited',who:['🌸 妈妈','🐹 仓鼠','🦤 渡渡','🐯 老虎','🦙 羊驼','🐧 企鹅','🐘 大象','🦫 海狸','🐺 灰狼','🐼 胖达'],visits:[{date:'2012.08',tag:'转机首游颐和园'},{date:'2018',who:['🌸 妈妈','🐹 仓鼠']},{date:'2024.03–09',who:['🦤 渡渡','🐯 老虎','🦙 羊驼','🐧 企鹅','🐘 大象','🦫 海狸','🐺 灰狼','🐼 胖达'],tag:'微软实习'}]},
    {id:'cn_tsh',name:'Tangshan',cn:'唐山',lat:39.6304,lng:118.1802,status:'visited',date:'2024.06',who:['🦏 犀犀']},
-   {id:'cn_sjz',name:'Shijiazhuang',cn:'石家庄',lat:38.0428,lng:114.5149,status:'visited',date:'2024.06',who:['🐼 胖达','🦏 犀犀','🐊 鳄鱼'],tag:'朋友婚礼'},
+   {id:'cn_sjz',name:'Shijiazhuang',cn:'石家庄',lat:38.0428,lng:114.5149,status:'visited',date:'2024.06',who:['🐼 胖达','🦏 犀犀','🐊 鳄鱼'],tag:'朋友婚礼',surprise:{cn:'🎉 第一次参加朋友的草坪婚礼,太梦幻啦！新娘的策划天赋点满 ✨ 祝这对💏长长久久,携手共白头～',en:'🎉 First lawn wedding I ever attended — pure dream! The bride had max planning skills ✨ Wishing this couple 💏 a long happy life together.'}},
    {id:'cn_qd',name:'Qingdao',cn:'青岛',lat:36.0671,lng:120.3826,status:'visited',date:'2011'},
    {id:'cn_yt',name:'Yantai',cn:'烟台',lat:37.4638,lng:121.4478,status:'visited',date:'2018',who:['🐼 胖达']},
    {id:'cn_ym',name:'Yangma Island',cn:'养马岛',lat:37.4520,lng:121.6900,status:'visited',date:'2018',who:['🐼 胖达']},
@@ -176,18 +174,18 @@ const seed=[
    {id:'cn_hsx',name:'Heishui (Sichuan)',cn:'黑水县（川西）',lat:32.0700,lng:102.9900,status:'visited',date:'2025.05',who:['🐼 胖达']},
    {id:'cn_hsx_h',name:'Horse Riding (Heishui)',cn:'骑马 🐴（黑水县）',lat:32.0500,lng:103.0000,status:'visited',act:'🐴',date:'2025.05',who:['🐼 胖达']},
    {id:'cn_hsx_s',name:'Stargazing (Heishui)',cn:'观星 🔭（黑水县）',lat:32.0900,lng:102.9700,status:'visited',act:'🔭',date:'2025.05',who:['🐼 胖达']},
-   {id:'cn_ts',name:'Mount Tai',cn:'泰山',lat:36.2543,lng:117.1010,status:'visited',who:['🦜 鹦鹉','🐘 大象','🦞 龙虾','🐝 蜜蜂'],surprise:'🎉 你怎么知道我夜爬了三次泰山！18 岁带着蛋糕上泰山过生日是我做过最 crazy 的事情！',visits:[{date:'2016.05.19',who:['🦜 鹦鹉'],tag:'18岁生日山顶提蛋糕'},{date:'2017.07',who:['🐘 大象','🦞 龙虾']},{date:'2017.08',who:['🐝 蜜蜂']}]},
+   {id:'cn_ts',name:'Mount Tai',cn:'泰山',lat:36.2543,lng:117.1010,status:'visited',who:['🦜 鹦鹉','🐘 大象','🦞 龙虾','🐝 蜜蜂'],surprise:{cn:'🎉 你怎么知道我夜爬了三次泰山！18 岁带着蛋糕上泰山过生日是我做过最 crazy 的事情！',en:'🎉 You found out I night-climbed Mt. Tai THREE times! At 18, with a cake on the summit — the craziest thing ever!'},visits:[{date:'2016.05.19',who:['🦜 鹦鹉'],tag:'18岁生日山顶提蛋糕'},{date:'2017.07',who:['🐘 大象','🦞 龙虾']},{date:'2017.08',who:['🐝 蜜蜂']}]},
    {id:'cn_xf',name:'Xifeng Hot Springs',cn:'息烽温泉',lat:27.0900,lng:106.7500,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 周叔叔','🐹 仓鼠','🌷 外婆']},
    {id:'cn_xqk',name:'Xiaoqikong Bridge',cn:'小七孔桥',lat:25.4217,lng:107.9425,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 周叔叔','🐹 仓鼠','🌷 外婆']},
    {id:'cn_zhy',name:'Zhenyuan',cn:'镇远',lat:27.0497,lng:108.4286,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 周叔叔','🐹 仓鼠','🌷 外婆']},
-   {id:'cn_cd',name:'Chengdu',cn:'成都',lat:30.5728,lng:104.0668,status:'visited',who:['🦜 鹦鹉','🦀 螃蟹','🐼 胖达','🐹 仓鼠'],visits:[{date:'2024',who:['🦜 鹦鹉','🦀 螃蟹']},{date:'另一次',who:['🐼 胖达','🐹 仓鼠']}]},
+   {id:'cn_cd',name:'Chengdu',cn:'成都',lat:30.5728,lng:104.0668,status:'visited',who:['🦜 鹦鹉','🦀 螃蟹','🐵 猴子','🐼 胖达','🐹 仓鼠','🐙 章鱼','🦤 渡渡','🦫 海狸','🐩 卷毛'],visits:[{date:'2024',who:['🦜 鹦鹉','🦀 螃蟹','🐵 猴子']},{date:'另一次',who:['🐼 胖达','🐹 仓鼠']},{date:'2025.5.31',who:['🐙 章鱼','🦤 渡渡'],tag:'露营 ⛺'},{date:'(date unknown)',who:['🦫 海狸','🐩 卷毛']}]},
    {id:'cn_nj',name:'Nanjing',cn:'南京',lat:32.0603,lng:118.7969,status:'visited',who:['🦜 鹦鹉','🦀 螃蟹','🐼 胖达'],visits:[{date:'2017.10',who:['🦜 鹦鹉','🦀 螃蟹'],tag:'国庆 · 总统府/夫子庙/莫愁湖/南航/中山广场'},{date:'另一次',who:['🐼 胖达']}]},
    {id:'cn_wh',name:'Wuhan',cn:'武汉',lat:30.5928,lng:114.3055,status:'visited',date:'2018 · 另一次',who:['🐼 胖达']},
    {id:'cn_cq',name:'Chongqing',cn:'重庆',lat:29.5630,lng:106.5516,status:'visited',who:['🐼 胖达']},
    {id:'cn_jn',name:'Jinan',cn:'济南',lat:36.6512,lng:117.1201,status:'visited',date:'2015–2022',tag:'求学时期'},
    {id:'cn_lw',name:'Laiwu',cn:'莱芜',lat:36.2143,lng:117.6764,status:'visited'},
    {id:'cn_zaz',name:'Zaozhuang',cn:'枣庄',lat:34.8108,lng:117.3236,status:'visited'},
-   {id:'cn_zhq',name:'Zhangqiu',cn:'章丘',lat:36.6814,lng:117.5378,status:'visited',date:'2018.04',who:['😺 狮仔'],surprise:'🎉 你怎么知道我第一次吃到了朋友妈妈做的大包子大馒头！'},
+   {id:'cn_zhq',name:'Zhangqiu',cn:'章丘',lat:36.6814,lng:117.5378,status:'visited',date:'2018.04',who:['😺 狮仔'],surprise:{cn:'🎉 你怎么知道我第一次吃到了朋友妈妈做的大包子大馒头！',en:'🎉 You found out my first homemade buns came from a kind friend mom right here!'}},
    {id:'cn_sh',name:'Shanghai',cn:'上海',lat:31.2304,lng:121.4737,status:'visited',date:'2022'},
    {id:'cn_hz',name:'Hangzhou',cn:'杭州',lat:30.2741,lng:120.1551,status:'visited',date:'2022'},
    {id:'cn_gz',name:'Guangzhou',cn:'广州',lat:23.1291,lng:113.2644,status:'visited',date:'2022',tag:'办荷兰签证'},
@@ -198,7 +196,7 @@ const seed=[
    {id:'cn_sy',name:'Shenyang',cn:'沈阳',lat:41.8057,lng:123.4315,status:'visited',date:'2018'},
    {id:'cn_heb',name:'Harbin',cn:'哈尔滨',lat:45.8038,lng:126.5350,status:'visited',date:'2018',who:['🐘 大象']},
    {id:'cn_tj',name:'Tianjin',cn:'天津',lat:39.3434,lng:117.3616,status:'visited',who:['🐗 野猪','🦃 火鸡','🦜 鹦鹉'],visits:[{date:'2017.04',who:['🐗 野猪','🦃 火鸡'],tag:'清明节'},{date:'2024.08',who:['🦜 鹦鹉']}]},
-   {id:'cn_dh',name:'Dunhuang',cn:'敦煌',lat:40.1421,lng:94.6634,status:'visited',date:'2016.08',tag:'人生第一次 solo trip · 莫高窟 · 鸣沙山月牙泉',surprise:'🎉 恭喜你发现我的第一次 solo trip！'},
+   {id:'cn_dh',name:'Dunhuang',cn:'敦煌',lat:40.1421,lng:94.6634,status:'visited',date:'2016.08',tag:'人生第一次 solo trip · 莫高窟 · 鸣沙山月牙泉',surprise:{cn:'🎉 恭喜你发现我的第一次 solo trip！',en:'🎉 You found my very first solo trip!'}},
    {id:'cn_hf',name:'Hefei',cn:'合肥',lat:31.8206,lng:117.2272,status:'visited',date:'2017.07',who:['🐯 老虎','🪼 水母'],tag:'机器鱼比赛'},
    {id:'cn_wf',name:'Weifang',cn:'潍坊',lat:36.7068,lng:119.1611,status:'visited'},
    {id:'cn_qh',name:'Qinghai Lake',cn:'青海湖',lat:36.8500,lng:100.1800,status:'visited',date:'2025',who:['🦆 鸭子','🐧 企鹅','🐯 老虎','🦙 羊驼','🐺 灰狼','🐛 毛虫','🦥 树懒'],tag:'🎭 葫芦娃毕业旅行 ✨'},
@@ -362,7 +360,7 @@ const ALIAS_EN={
 '🦥 树懒':'🦥 Sloth','🪼 水母':'🪼 Jelly','🦤 渡渡':'🦤 Dodo','🦏 犀犀':'🦏 Rhino',
 '🐊 鳄鱼':'🐊 Croc','🦛 河马':'🦛 Hippo','🐘 大象':'🐘 Elephant','🐛 毛虫':'🐛 Caterpillar',
 '🐎 飞马':'🐎 Horse','🐲 小龙':'🐲 Dragon','🦀 螃蟹':'🦀 Crab','🦆 鸭子':'🦆 Duck',
-'🦩 红鹤':'🦩 Flamingo',
+'🦩 红鹤':'🦩 Flamingo','🐙 章鱼':'🐙 Octopus','🦫 海狸':'🦫 Beaver','🐩 卷毛':'🐩 Poodle',
 '🐳 小鲸':'🐳 Whale','🦁 狮仔':'🦁 Lion','😺 狮仔':'😺 Lion','🐧 企鹅':'🐧 Penguin',
 '🦉 博士':'🦉 Owl','🐬 海豚':'🐬 Dolphin','🦦 水獭':'🦦 Otter','🇬🇧 英伦喵':'🇬🇧 UK Kitty',
 '🐨 考拉':'🐨 Koala','🦋 蝴蝶':'🦋 Butterfly','❄️ 小雪':'❄️ Snow','🦊 狐狸':'🦊 Fox',
@@ -460,6 +458,9 @@ const ALIAS_REASON={
 '🦀 螃蟹':'涛是浪 · 螃蟹住浪花边上',
 '🦆 鸭子':'倡导有声音 · 鸭子嘎嘎最爱叫',
 '🦩 红鹤':'淞有水 · 红鹤站在水中优雅又抢眼',
+'🐙 章鱼':'奕字灵动多变 · 章鱼八爪伸缩自如',
+'🦫 海狸':'永康温和勤勉 · 海狸专注又靠谱',
+'🐩 卷毛':'楚航温暖卷曲 · 卷毛贵宾犬总让人想抱抱',
 };
 function showSurpriseBanner(text,signature){
   let b=document.getElementById('surpriseBanner');
@@ -542,7 +543,7 @@ function tip(o,isCountry){
   return h;
 }
 function infoLines(o){let s='';if(o.big)s+='<br><b>'+(o.dive?TR('big'):TR('high'))+':</b> '+esc(o.big);if(o.season)s+='<br><b>'+TR('season')+':</b> '+esc(o.season);if(o.who&&o.who.length)s+='<br><b>'+TR('withw')+':</b> '+o.who.map(p=>esc(displayAlias(p))).join('、');if(o.tag)s+='<br><b>'+TR('note')+':</b> '+esc(o.tag);return s;}
-function popupHtml(c,ci){let body='';if(ci.surprise){body+='<div style="margin:6px 0;padding:10px;background:linear-gradient(135deg,#ffd47a,#ffb84d);color:#3a2d00;border-radius:10px;font-weight:600;box-shadow:0 3px 10px rgba(255,180,80,.35)">'+esc(ci.surprise)+'</div>';}if(ci.visits&&ci.visits.length){body+='<div style="color:#888;font-size:12px">'+stLabel(ci.status)+'</div>'+ci.visits.map(v=>{let h='🗓 '+esc(v.date||'?');if(v.who&&v.who.length)h+='<br>· '+TR('withw')+': '+v.who.map(p=>esc(displayAlias(p))).join('、');if(v.tag)h+='<br>· '+esc(v.tag);return '<div style="margin:6px 0;padding:4px 8px;border-left:2px solid #6ea8fe;background:rgba(110,168,254,0.07)">'+h+'</div>';}).join('');}else{body+='<span style="color:#888;font-size:12px">'+stLabel(ci.status)+(ci.date?' · '+esc(ci.date):'')+'</span>'+infoLines(ci);}return '<div class="pop"><b>'+(ci.dive?'🤿 ':(ci.act?ci.act+' ':''))+cityDisp(ci)+'</b><br>'+body+'<div class="r"><button onclick="toggleCity(\''+c.id+'\',\''+ci.id+'\')">⇄</button><button onclick="dateCity(\''+c.id+'\',\''+ci.id+'\')">🗓</button><button onclick="renameCity(\''+c.id+'\',\''+ci.id+'\')">✎</button></div></div>';}
+function popupHtml(c,ci){let body='';if(ci.surprise){var __s=typeof ci.surprise==='object'?(ci.surprise[lang]||ci.surprise.cn):ci.surprise;body+='<div style="margin:6px 0;padding:10px;background:linear-gradient(135deg,#ffd47a,#ffb84d);color:#3a2d00;border-radius:10px;font-weight:600;box-shadow:0 3px 10px rgba(255,180,80,.35)">'+esc(__s)+'</div>';}if(ci.visits&&ci.visits.length){body+='<div style="color:#888;font-size:12px">'+stLabel(ci.status)+'</div>'+ci.visits.map(v=>{let h='🗓 '+esc(v.date||'?');if(v.who&&v.who.length)h+='<br>· '+TR('withw')+': '+v.who.map(p=>esc(displayAlias(p))).join('、');if(v.tag)h+='<br>· '+esc(v.tag);return '<div style="margin:6px 0;padding:4px 8px;border-left:2px solid #6ea8fe;background:rgba(110,168,254,0.07)">'+h+'</div>';}).join('');}else{body+='<span style="color:#888;font-size:12px">'+stLabel(ci.status)+(ci.date?' · '+esc(ci.date):'')+'</span>'+infoLines(ci);}return '<div class="pop"><b>'+(ci.dive?'🤿 ':(ci.act?ci.act+' ':''))+cityDisp(ci)+'</b><br>'+body+'<div class="r"><button onclick="toggleCity(\''+c.id+'\',\''+ci.id+'\')">⇄</button><button onclick="dateCity(\''+c.id+'\',\''+ci.id+'\')">🗓</button><button onclick="renameCity(\''+c.id+'\',\''+ci.id+'\')">✎</button></div></div>';}
 function countryPopupHtml(c){return '<div class="pop">'+tip(c,true)+'<div class="r"><button onclick="goCountry(\''+c.id+'\')">📍 '+(lang==='cn'?'看城市':'Cities')+'</button></div></div>';}
 window.goCountry=function(id){const c=data.find(x=>x.id===id);if(c){map.closePopup();map.flyTo([c.lat,c.lng],Math.max(ZT,6),{duration:.6});}};
 
@@ -569,7 +570,7 @@ function render(force){
         if(catSel.has(catOf(ci))&&(peopleMatch(ci)||peopleMatch(c))){
           const m=mkLayer(ci).addTo(map);
           m.bindTooltip(tip(ci,false),{sticky:true,direction:'top',className:'info'});
-          m.bindPopup(popupHtml(c,ci));if(ci.surprise)m.on('click',()=>showSurpriseBanner(ci.surprise));
+          m.bindPopup(popupHtml(c,ci));if(ci.surprise)m.on('click',()=>showSurpriseBanner(typeof ci.surprise==='object'?ci.surprise[lang]||ci.surprise.cn:ci.surprise));
           markers[ci.id]=m;pts.push([ci.lat,ci.lng]);
         }
       });
@@ -579,7 +580,7 @@ function render(force){
     renderStats();return;
   }
   const z=map.getZoom();
-  if(z<ZT){
+  if(z<ZT&&viewMode!=='china'){
     if(curKey==='__c__'&&!force)return;
     curKey='__c__';clearMarkers();
     data.filter(c=>inView(c)&&peopleMatch(c)).forEach(c=>{
@@ -596,7 +597,7 @@ function render(force){
     if(c)(c.cities||[]).filter(peopleMatch).forEach(ci=>{
       const m=mkLayer(ci).addTo(map);
       m.bindTooltip(tip(ci,false),{sticky:true,direction:'top',className:'info'});
-      m.bindPopup(popupHtml(c,ci));if(ci.surprise)m.on('click',()=>showSurpriseBanner(ci.surprise));
+      m.bindPopup(popupHtml(c,ci));if(ci.surprise)m.on('click',()=>showSurpriseBanner(typeof ci.surprise==='object'?ci.surprise[lang]||ci.surprise.cn:ci.surprise));
       markers[ci.id]=m;
     });
     document.getElementById('hint').innerHTML=c?('<b>'+(c.flag?c.flag+' ':'')+cName(c)+'</b>'+TR('backInfo')+((c.cities&&c.cities.length)?'':' '+TR('cityTodo'))):TR('hintC');
@@ -664,7 +665,6 @@ function applyLang(){
   document.getElementById('chinaBtn').textContent=TR('china');
   document.getElementById('langBtn').textContent=TR('lang');
   document.getElementById('exportBtn').textContent=TR('exp');
-  document.getElementById('importBtn').textContent=TR('imp');
   document.getElementById('shotBtn').textContent=TR('shot');
   document.getElementById('pplHead').textContent=TR('ppl');
   document.getElementById('peopleAll').textContent=TR('showall');
@@ -693,7 +693,7 @@ function showHoverName(){
   }).catch(()=>{});
 }
 document.getElementById('worldBtn').onclick=()=>{viewMode='world';map.flyTo([25,30],2,{duration:.6});updateGeo();render(true);renderSide();renderPeople();renderStats();updateChipActive();};
-document.getElementById('chinaBtn').onclick=()=>{viewMode='china';map.flyToBounds([[18,73],[53,135]],{padding:[30,30],maxZoom:5,duration:.8});updateGeo();render(true);renderSide();renderPeople();renderStats();updateChipActive();};
+document.getElementById('chinaBtn').onclick=()=>{viewMode='china';map.flyToBounds([[18,73],[53,135]],{padding:innerWidth<680?[8,8]:[30,30],maxZoom:innerWidth<680?4:5,duration:.8});updateGeo();render(true);renderSide();renderPeople();renderStats();updateChipActive();};
 function updateChipActive(){document.getElementById('worldBtn').classList.toggle('active',viewMode==='world');document.getElementById('chinaBtn').classList.toggle('active',viewMode==='china');}
 updateChipActive();
 document.getElementById('langBtn').onclick=()=>{lang=lang==='cn'?'en':'cn';applyLang();setTheme(theme);};
@@ -702,8 +702,6 @@ document.querySelectorAll('#legend .chip').forEach(ch=>{ch.onclick=()=>{const c=
 document.getElementById('peopleAll').onclick=()=>{peopleSel.clear();renderPeople();render(true);renderSide();};
 document.getElementById('peopleToggle').onclick=function(){const box=document.getElementById('people');const hidden=box.style.display==='none';box.style.display=hidden?'flex':'none';this.textContent=hidden?TR('hide'):TR('show');};
 document.getElementById('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='travel-map.json';a.click();};
-document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
-document.getElementById('importFile').onchange=ev=>{const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){data=d;save();applyLang();}}catch(e){alert('Bad file format');}};r.readAsText(f);};
 document.getElementById('shotBtn').onclick=function(){
   const btn=this,orig=btn.textContent;btn.textContent='⏳';
   const go=()=>{
@@ -748,7 +746,7 @@ applyLang();
 (function(){
   var SB_URL='https://djooceukxlmtxxfbqeqd.supabase.co';
   var SB_KEY='sb_publishable_vF5QoGZ89A9pO0RXqRBk1Q_ZPFm4hL-';
-  var ALIASES=['🐳 小鲸','🦁 狮仔','🐧 企鹅','🦉 博士','🐬 海豚','🦦 水獭','🇬🇧 英伦喵','🐨 考拉','🦋 蝴蝶','❄️ 小雪','🦊 狐狸','🐰 兔兔','🦌 小鹿','☁️ 云朵','🌞 小太阳','🌸 妈妈','🌴 爸爸','🌷 外婆','🍃 小姨','🐂 二爸','🐉 大伯','⭐ 周叔叔','🦔 黄姑爷','🐹 仓鼠','🐼 胖达','🐢 龟龟','🐝 蜜蜂','🐍 小青','🐌 蜗牛','🦘 跳跳','🐿 松鼠','🦛 河马','🦝 浣熊','🐶 狗子','🐱 猫咪','🦜 鹦鹉','🐘 大象','🦞 龙虾','🦀 螃蟹','🐺 灰狼','🐵 猴子','🐲 小龙','🦄 独角兽','🐔 小鸡','🐮 牛牛','🐸 青蛙','🦒 长颈','🐎 飞马','🐗 野猪','🦃 火鸡','🦆 鸭子','🐯 老虎','🦙 羊驼','🐛 毛虫','🦥 树懒','🪼 水母','🦤 渡渡','🦏 犀犀','🐊 鳄鱼','🦩 红鹤'];
+  var ALIASES=['🐳 小鲸','🦁 狮仔','🐧 企鹅','🦉 博士','🐬 海豚','🦦 水獭','🇬🇧 英伦喵','🐨 考拉','🦋 蝴蝶','❄️ 小雪','🦊 狐狸','🐰 兔兔','🦌 小鹿','☁️ 云朵','🌞 小太阳','🌸 妈妈','🌴 爸爸','🌷 外婆','🍃 小姨','🐂 二爸','🐉 大伯','⭐ 周叔叔','🦔 黄姑爷','🐹 仓鼠','🐼 胖达','🐢 龟龟','🐝 蜜蜂','🐍 小青','🐌 蜗牛','🦘 跳跳','🐿 松鼠','🦛 河马','🦝 浣熊','🐶 狗子','🐱 猫咪','🦜 鹦鹉','🐘 大象','🦞 龙虾','🦀 螃蟹','🐺 灰狼','🐵 猴子','🐲 小龙','🦄 独角兽','🐔 小鸡','🐮 牛牛','🐸 青蛙','🦒 长颈','🐎 飞马','🐗 野猪','🦃 火鸡','🦆 鸭子','🐯 老虎','🦙 羊驼','🐛 毛虫','🦥 树懒','🪼 水母','🦤 渡渡','🦏 犀犀','🐊 鳄鱼','🦩 红鹤','🐙 章鱼','🦫 海狸','🐩 卷毛'];
   var sb=null; try{ sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){}
   function $(id){return document.getElementById(id);}
   function esc(s){return (s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -759,7 +757,7 @@ applyLang();
   function visits(){ if(!sb)return; sb.rpc('bump_visits').then(function(r){ if(r&&r.data!=null)$('gbVisits').textContent=GB('visits')(r.data); }).catch(function(){}); }
   function loadList(){} // 留言只收集、不在网站上公开展示（可在 Supabase 后台查看）
   $('gSendBtn').onclick=function(){ if(!sb){$('gbMsgResult').textContent=GB('noDB');return;} var msg=$('gMsg').value.trim(); if(!msg){$('gbMsgResult').textContent=GB('writeSth');return;} $('gbMsgResult').textContent=GB('sending'); sb.from('guestbook').insert({nickname:($('gNick').value.trim()||null),message:msg}).then(function(r){ if(r.error){$('gbMsgResult').textContent=GB('sendFail');} else {$('gMsg').value='';$('gbMsgResult').textContent=GB('sent');loadList();} }); };
-  $('gGuessBtn').onclick=function(){ if(!sb)return; var name=$('gName').value.trim(); var guess=sel.value; if(!name){$('gGuessResult').textContent=GB('promptName');return;} $('gGuessResult').textContent=GB('verifying'); sb.rpc('check_guess',{p_name:name,p_guess:guess}).then(function(r){ if(r.data===true){$('gGuessResult').textContent=GB('correct');fireworks();var __r=(window.ALIAS_REASON&&ALIAS_REASON[guess])||'';var __msg=GB('correctMsg');if(__r)__msg+='<br><br><span style="font-size:15px;font-weight:500;opacity:.92">'+GB('reasonLabel')+__r+'</span>';if(window.showSurpriseBanner)showSurpriseBanner(__msg,'Claude');} else {$('gGuessResult').textContent=GB('wrong');} }).catch(function(){$('gGuessResult').textContent=GB('errored');}); };
+  $('gGuessBtn').onclick=function(){ if(!sb)return; var name=$('gName').value.trim(); var guess=sel.value; if(!name){$('gGuessResult').textContent=GB('promptName');return;} $('gGuessResult').textContent=GB('verifying'); sb.rpc('check_guess',{p_name:name,p_guess:guess}).then(function(r){ if(r.data===true){$('gGuessResult').textContent=GB('correct');fireworks();var __r=(typeof ALIAS_REASON!=='undefined'&&ALIAS_REASON[guess])||'';var __aliasDisp=(typeof displayAlias==='function'?displayAlias(guess):guess);var __why=(lang==='cn'?'为什么给你起 '+__aliasDisp+' ？':'Why "'+__aliasDisp+'"? ');var __msg=GB('correctMsg');if(__r)__msg+='<br><br><span style="font-size:15px;font-weight:500;opacity:.92">'+__why+'<br>'+__r+'</span>';if(typeof showSurpriseBanner==='function')showSurpriseBanner(__msg,'Claude');} else {$('gGuessResult').textContent=GB('wrong');} }).catch(function(){$('gGuessResult').textContent=GB('errored');}); };
   function fireworks(){ var c=$('fw');c.style.display='block';c.width=innerWidth;c.height=innerHeight;var ctx=c.getContext('2d');var ps=[];function burst(x,y){var n=60,hue=Math.random()*360;for(var i=0;i<n;i++){var a=Math.PI*2*i/n,sp=2+Math.random()*4;ps.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:70+Math.random()*30,c:'hsl('+hue+',90%,62%)'});}}
     for(var k=0;k<5;k++){(function(k){setTimeout(function(){burst(innerWidth*(0.2+Math.random()*0.6),innerHeight*(0.2+Math.random()*0.4));},k*260);})(k);}
     var frames=0;(function loop(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=0.04;p.life--;ctx.globalAlpha=Math.max(0,p.life/90);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,2.6,0,7);ctx.fill();});ps=ps.filter(function(p){return p.life>0;});frames++;if(frames<210&&(ps.length||frames<150))requestAnimationFrame(loop);else{ctx.clearRect(0,0,c.width,c.height);c.style.display='none';}})(); }
