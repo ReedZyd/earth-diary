@@ -70,9 +70,9 @@
   }
 
   #gbFab{position:fixed;right:16px;bottom:16px;z-index:1200;width:54px;height:54px;border-radius:50%;border:none;background:#6ea8fe;color:#0b1020;font-size:24px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.45)}
-  #gbModal{position:fixed;inset:0;z-index:1300;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center}
-  #gbModal.show{display:flex}
-  #gbCard{width:min(520px,92vw);max-height:86vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;color:var(--text)}
+  #gbModal{position:fixed;right:0;top:0;bottom:0;width:min(360px,92vw);z-index:1300;background:transparent;display:none;pointer-events:none;transform:translateX(100%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+  #gbModal{display:block}#gbModal.show{transform:translateX(0);pointer-events:auto}
+  #gbCard{width:100%;height:100%;overflow:auto;background:var(--panel);border-left:1px solid var(--line);border-radius:0;padding:16px 16px 32px;color:var(--text);box-shadow:-8px 0 24px rgba(0,0,0,.25);box-sizing:border-box;pointer-events:auto}
   #gbCard h3{margin:0 0 4px;font-size:17px} #gbCard h4{margin:0 0 8px;font-size:14px}
   #gbCard .sub{color:var(--muted);font-size:12px;margin-bottom:8px}
   .gbsec{border-top:1px solid var(--line);margin-top:12px;padding-top:12px}
@@ -750,10 +750,10 @@ applyLang();
   var sb=null; try{ sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){}
   function $(id){return document.getElementById(id);}
   function esc(s){return (s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  var sel=$('gAlias'); ALIASES.forEach(function(a){var o=document.createElement('option');o.value=a;o.textContent=displayAlias(a);sel.appendChild(o);});
+  var sel=$('gAlias'); var __FAM=['🌸 妈妈','🌴 爸爸','🌷 外婆','🍃 小姨','🐂 二爸','🐉 大伯','⭐ 周叔叔','🦔 黄姑爷']; ALIASES.filter(function(a){return __FAM.indexOf(a)<0;}).forEach(function(a){var o=document.createElement('option');o.value=a;o.textContent=displayAlias(a);sel.appendChild(o);});
   $('gbFab').onclick=function(){$('gbModal').classList.add('show');loadList();};
   $('gbCloseBtn').onclick=function(){$('gbModal').classList.remove('show');};
-  $('gbModal').onclick=function(e){if(e.target===$('gbModal'))$('gbModal').classList.remove('show');};
+  
   function visits(){ if(!sb)return; sb.rpc('bump_visits').then(function(r){ if(r&&r.data!=null)$('gbVisits').textContent=GB('visits')(r.data); }).catch(function(){}); }
   function loadList(){} // 留言只收集、不在网站上公开展示（可在 Supabase 后台查看）
   $('gSendBtn').onclick=function(){ if(!sb){$('gbMsgResult').textContent=GB('noDB');return;} var msg=$('gMsg').value.trim(); if(!msg){$('gbMsgResult').textContent=GB('writeSth');return;} $('gbMsgResult').textContent=GB('sending'); sb.from('guestbook').insert({nickname:($('gNick').value.trim()||null),message:msg}).then(function(r){ if(r.error){$('gbMsgResult').textContent=GB('sendFail');} else {$('gMsg').value='';$('gbMsgResult').textContent=GB('sent');loadList();} }); };
