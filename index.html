@@ -203,7 +203,7 @@ const seed=[
    {id:'cn_wf',name:'Weifang',cn:'潍坊',lat:36.7068,lng:119.1611,status:'visited'},
    {id:'cn_qh',name:'Qinghai Lake',cn:'青海湖',lat:36.8500,lng:100.1800,status:'visited',date:'2025',who:['🦆 鸭子','🐧 企鹅','🐯 老虎','🦙 羊驼','🐺 灰狼','🐛 毛虫','🦥 树懒'],tag:'🎭 葫芦娃毕业旅行 ✨'},
    {id:'cn_xn',name:'Xining',cn:'西宁',lat:36.6232,lng:101.7800,status:'visited',date:'2025',who:['🦆 鸭子','🐧 企鹅','🐯 老虎','🦙 羊驼','🐺 灰狼','🐛 毛虫','🦥 树懒'],tag:'🎭 葫芦娃毕业旅行 ✨'},
-   {id:'cn_ali',name:'Ali (Tibet)',cn:'西藏阿里',lat:32.5000,lng:80.1000,status:'planned'},
+   {id:'cn_ali',name:'Ali Stargazing (Tibet)',cn:'西藏阿里 🔭 观星',lat:32.5000,lng:80.1000,status:'planned',act:'🔭'},
    {id:'cn_xj',name:'Xinjiang Road Trip',cn:'新疆 · 自驾',lat:43.8256,lng:87.6168,status:'planned'},
    {id:'cn_yic',name:'Yichun',cn:'伊春',lat:47.7283,lng:128.9000,status:'visited',date:'2012.08',tag:'黑龙江'}]},
  {id:'jp',name:'Japan',cn:'日本',flag:'🇯🇵',lat:36.20,lng:138.25,status:'visited',date:'2025',geo:'Japan',who:['🦌 小鹿'],cities:[]},
@@ -342,7 +342,33 @@ fetch('https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.jso
     return on?{fillColor:'#f2e7a8',fillOpacity:.5,color:'#f2e7a8',weight:1,opacity:.5}:{fillOpacity:0,opacity:0,weight:0};
   }}).addTo(map);geoLayer.bringToBack();updateGeo();
 }).catch(()=>{});
-function updateGeo(){if(!geoLayer)return;if(map.getZoom()<ZT){if(!map.hasLayer(geoLayer)){geoLayer.addTo(map);geoLayer.bringToBack();}}else if(map.hasLayer(geoLayer)){map.removeLayer(geoLayer);}}
+// City -> Province (full name to match Chinese GeoJSON)
+const CITY2PROV={'cn_luz':'四川省','cn_bj':'北京市','cn_qd':'山东省','cn_yt':'山东省','cn_ym':'山东省','cn_suz':'江苏省','cn_xsbn':'云南省','cn_mj':'云南省','cn_lj':'云南省','cn_lsh':'四川省','cn_mh':'四川省','cn_zg':'四川省','cn_jia':'四川省','cn_lz':'四川省','cn_jzg':'四川省','cn_ts':'山东省','cn_xf':'贵州省','cn_xqk':'贵州省','cn_zhy':'贵州省','cn_cd':'四川省','cn_nj':'江苏省','cn_wh':'湖北省','cn_cq':'重庆市','cn_jn':'山东省','cn_lw':'山东省','cn_zaz':'山东省','cn_zhq':'山东省','cn_wf':'山东省','cn_sh':'上海市','cn_hz':'浙江省','cn_gz':'广东省','cn_lan':'甘肃省','cn_by':'甘肃省','cn_xa':'陕西省','cn_dh':'甘肃省','cn_dl':'辽宁省','cn_sy':'辽宁省','cn_tj':'天津市','cn_hf':'安徽省','cn_qh':'青海省','cn_xn':'青海省','cn_yic':'黑龙江省','cn_heb':'黑龙江省','cn_tsh':'河北省','cn_sjz':'河北省','cn_hsx':'四川省','cn_hsx_h':'四川省','cn_hsx_s':'四川省','cn_ali':'西藏自治区','cn_xj':'新疆维吾尔自治区'};
+function visitedProvinces(){const set=new Set();const cn=data.find(c=>c.id==='cn');if(cn&&cn.cities)cn.cities.forEach(ci=>{if(ci.status==='visited'&&CITY2PROV[ci.id])set.add(CITY2PROV[ci.id]);});return set;}
+function plannedProvinces(){const set=new Set();const cn=data.find(c=>c.id==='cn');if(cn&&cn.cities)cn.cities.forEach(ci=>{if((ci.status==='planned'||ci.status==='soon')&&CITY2PROV[ci.id])set.add(CITY2PROV[ci.id]);});return set;}
+let chinaGeoLayer=null;
+fetch('https://cdn.jsdelivr.net/gh/longwosion/geojson-map-china@master/china.json').then(r=>r.json()).then(gj=>{
+  chinaGeoLayer=L.geoJSON(gj,{interactive:true,style:f=>{
+    const nm=f.properties.name;const vs=visitedProvinces();const ps=plannedProvinces();
+    if(vs.has(nm))return {fillColor:'#f5deb3',fillOpacity:.55,color:'#aa8b3a',weight:.8};
+    if(ps.has(nm))return {fillColor:'#a8c8f5',fillOpacity:.35,color:'#5a82c0',weight:.6};
+    return {fillColor:'#e8e8e8',fillOpacity:.06,color:'#888',weight:.4};
+  },onEachFeature:(f,layer)=>{
+    const nm=f.properties.name;
+    const cn=data.find(c=>c.id==='cn');
+    const provCities=(cn&&cn.cities||[]).filter(ci=>CITY2PROV[ci.id]===nm);
+    const visN=provCities.filter(ci=>ci.status==='visited').length;
+    const planN=provCities.filter(ci=>ci.status==='planned'||ci.status==='soon').length;
+    const nameList=provCities.map(ci=>ci.cn||ci.name).join('、');
+    let tt='<b>'+nm+'</b>';
+    if(visN) tt+='<br>去过 '+visN+' 处';
+    if(planN) tt+=' · 想去 '+planN;
+    if(nameList) tt+='<br><span style="color:#666;font-size:11px">'+nameList+'</span>';
+    layer.bindTooltip(tt,{sticky:true,direction:'top'});
+  }});
+  updateGeo();
+}).catch(()=>{});
+function updateGeo(){if(geoLayer){const showW=viewMode!=='china'&&map.getZoom()<ZT;if(showW&&!map.hasLayer(geoLayer)){geoLayer.addTo(map);geoLayer.bringToBack();}else if(!showW&&map.hasLayer(geoLayer))map.removeLayer(geoLayer);}if(chinaGeoLayer){const showC=viewMode==='china';if(showC&&!map.hasLayer(chinaGeoLayer)){chinaGeoLayer.addTo(map);chinaGeoLayer.bringToBack();}else if(!showC&&map.hasLayer(chinaGeoLayer))map.removeLayer(chinaGeoLayer);}}
 
 let markers={}, curKey=null;
 function clearMarkers(){Object.values(markers).forEach(m=>map.removeLayer(m));markers={};}
@@ -459,11 +485,19 @@ window.delCity=function(cid,ciid){const c=data.find(x=>x.id===cid);if(!c)return;
 window.dateCity=function(cid,ciid){const c=data.find(x=>x.id===cid);const ci=c&&c.cities.find(y=>y.id===ciid);if(!ci)return;const d=prompt('Time (e.g. 2026.05):',ci.date||'');if(d!==null){ci.date=d.trim();save();render(true);}};
 
 function renderStats(){
+  if(viewMode==='china'){
+    const provs=visitedProvinces().size;
+    const cn=data.find(c=>c.id==='cn');
+    const v=(cn&&cn.cities||[]).filter(ci=>ci.status==='visited').length;
+    const p=(cn&&cn.cities||[]).filter(ci=>ci.status==='planned'||ci.status==='soon').length;
+    document.getElementById('stats').innerHTML=(lang==='cn')?('去过 <b>'+provs+'</b> 省/直辖市 · <b>'+v+'</b> 地点 · 想去 <b>'+p+'</b>'):('Visited <b>'+provs+'</b> provinces · <b>'+v+'</b> places · Wishlist <b>'+p+'</b>');
+    updateTankBar();return;
+  }
   const v=data.filter(c=>inView(c)&&c.status==='visited').length,s=data.filter(c=>inView(c)&&c.status==='soon').length,p=data.filter(c=>inView(c)&&c.status==='planned').length,dv=data.filter(c=>inView(c)&&c.dive).length;
   document.getElementById('stats').innerHTML=TR('statsfmt')(v,s,p,dv,TANKS.total);
   updateTankBar();
 }
-function peopleCounts(){const m={};data.filter(c=>viewMode==='china'?c.id==='cn':c.id!=='cn').forEach(c=>{const set=new Set([...(c.who||[])]);(c.cities||[]).forEach(ci=>(ci.who||[]).forEach(p=>set.add(p)));set.forEach(p=>m[p]=(m[p]||0)+1);});return m;}
+function peopleCounts(){const m={};if(viewMode==='china'){const cn=data.find(c=>c.id==='cn');const pp={};if(cn&&cn.cities)cn.cities.forEach(ci=>{const prov=CITY2PROV[ci.id];if(!prov)return;const aw=new Set();(ci.who||[]).forEach(p=>aw.add(p));(ci.visits||[]).forEach(v=>(v.who||[]).forEach(p=>aw.add(p)));aw.forEach(p=>{if(!pp[p])pp[p]=new Set();pp[p].add(prov);});});Object.keys(pp).forEach(p=>m[p]=pp[p].size);return m;}data.filter(c=>c.id!=='cn').forEach(c=>{const set=new Set([...(c.who||[])]);(c.cities||[]).forEach(ci=>(ci.who||[]).forEach(p=>set.add(p)));set.forEach(p=>m[p]=(m[p]||0)+1);});return m;}
 function renderPeople(){
   const box=document.getElementById('people');box.innerHTML='';
   const cnt=peopleCounts();
