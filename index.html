@@ -176,7 +176,7 @@ const seed=[
    {id:'cn_hsx',name:'Heishui (Sichuan)',cn:'黑水县（川西）',lat:32.0700,lng:102.9900,status:'visited',date:'2025.05',who:['🐼 胖达']},
    {id:'cn_hsx_h',name:'Horse Riding (Heishui)',cn:'骑马 🐴（黑水县）',lat:32.0500,lng:103.0000,status:'visited',act:'🐴',date:'2025.05',who:['🐼 胖达']},
    {id:'cn_hsx_s',name:'Stargazing (Heishui)',cn:'观星 🔭（黑水县）',lat:32.0900,lng:102.9700,status:'visited',act:'🔭',date:'2025.05',who:['🐼 胖达']},
-   {id:'cn_ts',name:'Mount Tai',cn:'泰山',lat:36.2543,lng:117.1010,status:'visited',who:['🦜 鹦鹉','🐘 大象','🦞 龙虾','🐝 蜜蜂'],surprise:'🎉 恭喜你发现我夜爬了三次泰山！第一次还是 18 岁生日带着蛋糕过的',visits:[{date:'2016.05.19',who:['🦜 鹦鹉'],tag:'18岁生日山顶提蛋糕'},{date:'2017.07',who:['🐘 大象','🦞 龙虾']},{date:'2017.08',who:['🐝 蜜蜂']}]},
+   {id:'cn_ts',name:'Mount Tai',cn:'泰山',lat:36.2543,lng:117.1010,status:'visited',who:['🦜 鹦鹉','🐘 大象','🦞 龙虾','🐝 蜜蜂'],surprise:'🎉 你怎么知道我夜爬了三次泰山！18 岁带着蛋糕上泰山过生日是我做过最 crazy 的事情！',visits:[{date:'2016.05.19',who:['🦜 鹦鹉'],tag:'18岁生日山顶提蛋糕'},{date:'2017.07',who:['🐘 大象','🦞 龙虾']},{date:'2017.08',who:['🐝 蜜蜂']}]},
    {id:'cn_xf',name:'Xifeng Hot Springs',cn:'息烽温泉',lat:27.0900,lng:106.7500,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 周叔叔','🐹 仓鼠','🌷 外婆']},
    {id:'cn_xqk',name:'Xiaoqikong Bridge',cn:'小七孔桥',lat:25.4217,lng:107.9425,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 周叔叔','🐹 仓鼠','🌷 外婆']},
    {id:'cn_zhy',name:'Zhenyuan',cn:'镇远',lat:27.0497,lng:108.4286,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 周叔叔','🐹 仓鼠','🌷 外婆']},
@@ -204,6 +204,7 @@ const seed=[
    {id:'cn_qh',name:'Qinghai Lake',cn:'青海湖',lat:36.8500,lng:100.1800,status:'visited',date:'2025',who:['🦆 鸭子','🐧 企鹅','🐯 老虎','🦙 羊驼','🐺 灰狼','🐛 毛虫','🦥 树懒'],tag:'🎭 葫芦娃毕业旅行 ✨'},
    {id:'cn_xn',name:'Xining',cn:'西宁',lat:36.6232,lng:101.7800,status:'visited',date:'2025',who:['🦆 鸭子','🐧 企鹅','🐯 老虎','🦙 羊驼','🐺 灰狼','🐛 毛虫','🦥 树懒'],tag:'🎭 葫芦娃毕业旅行 ✨'},
    {id:'cn_ali',name:'Ali Stargazing (Tibet)',cn:'西藏阿里 🔭 观星',lat:32.5000,lng:80.1000,status:'planned',act:'🔭'},
+   {id:'cn_xs',name:'Xisha Islands',cn:'西沙群岛',lat:16.5000,lng:112.0000,status:'planned',dive:true,big:'珊瑚礁、鲨鱼、刺尾鱼、海龟',season:'Apr–Oct'},
    {id:'cn_xj',name:'Xinjiang Road Trip',cn:'新疆 · 自驾',lat:43.8256,lng:87.6168,status:'planned'},
    {id:'cn_yic',name:'Yichun',cn:'伊春',lat:47.7283,lng:128.9000,status:'visited',date:'2012.08',tag:'黑龙江'}]},
  {id:'jp',name:'Japan',cn:'日本',flag:'🇯🇵',lat:36.20,lng:138.25,status:'visited',date:'2025',geo:'Japan',who:['🦌 小鹿'],cities:[]},
@@ -348,7 +349,7 @@ fetch('https://cdn.jsdelivr.net/gh/johan/world.geo.json@master/countries.geo.jso
   }}).addTo(map);geoLayer.bringToBack();updateGeo();
 }).catch(()=>{});
 // City -> Province (full name to match Chinese GeoJSON)
-const CITY2PROV={'cn_luz':'四川省','cn_bj':'北京市','cn_qd':'山东省','cn_yt':'山东省','cn_ym':'山东省','cn_suz':'江苏省','cn_xsbn':'云南省','cn_mj':'云南省','cn_lj':'云南省','cn_lsh':'四川省','cn_mh':'四川省','cn_zg':'四川省','cn_jia':'四川省','cn_lz':'四川省','cn_jzg':'四川省','cn_ts':'山东省','cn_xf':'贵州省','cn_xqk':'贵州省','cn_zhy':'贵州省','cn_cd':'四川省','cn_nj':'江苏省','cn_wh':'湖北省','cn_cq':'重庆市','cn_jn':'山东省','cn_lw':'山东省','cn_zaz':'山东省','cn_zhq':'山东省','cn_wf':'山东省','cn_sh':'上海市','cn_hz':'浙江省','cn_gz':'广东省','cn_lan':'甘肃省','cn_by':'甘肃省','cn_xa':'陕西省','cn_dh':'甘肃省','cn_dl':'辽宁省','cn_sy':'辽宁省','cn_tj':'天津市','cn_hf':'安徽省','cn_qh':'青海省','cn_xn':'青海省','cn_yic':'黑龙江省','cn_heb':'黑龙江省','cn_tsh':'河北省','cn_sjz':'河北省','cn_hsx':'四川省','cn_hsx_h':'四川省','cn_hsx_s':'四川省','cn_ali':'西藏自治区','cn_xj':'新疆维吾尔自治区'};
+const CITY2PROV={'cn_luz':'四川省','cn_bj':'北京市','cn_qd':'山东省','cn_yt':'山东省','cn_ym':'山东省','cn_suz':'江苏省','cn_xsbn':'云南省','cn_mj':'云南省','cn_lj':'云南省','cn_lsh':'四川省','cn_mh':'四川省','cn_zg':'四川省','cn_jia':'四川省','cn_lz':'四川省','cn_jzg':'四川省','cn_ts':'山东省','cn_xf':'贵州省','cn_xqk':'贵州省','cn_zhy':'贵州省','cn_cd':'四川省','cn_nj':'江苏省','cn_wh':'湖北省','cn_cq':'重庆市','cn_jn':'山东省','cn_lw':'山东省','cn_zaz':'山东省','cn_zhq':'山东省','cn_wf':'山东省','cn_sh':'上海市','cn_hz':'浙江省','cn_gz':'广东省','cn_lan':'甘肃省','cn_by':'甘肃省','cn_xa':'陕西省','cn_dh':'甘肃省','cn_dl':'辽宁省','cn_sy':'辽宁省','cn_tj':'天津市','cn_hf':'安徽省','cn_qh':'青海省','cn_xn':'青海省','cn_yic':'黑龙江省','cn_heb':'黑龙江省','cn_tsh':'河北省','cn_sjz':'河北省','cn_hsx':'四川省','cn_hsx_h':'四川省','cn_hsx_s':'四川省','cn_ali':'西藏自治区','cn_xj':'新疆维吾尔自治区','cn_xs':'海南省'};
 const ALIAS_EN={
 '🌸 妈妈':'🌸 Mom','🌴 爸爸':'🌴 Dad','🌷 外婆':'🌷 Grandma','🍃 小姨':'🍃 Auntie',
 '🐂 二爸':'🐂 Uncle 2','🐉 大伯':'🐉 Uncle Sr','⭐ 周叔叔':'⭐ Uncle Zhou','🦔 黄姑爷':'🦔 Uncle Huang',
@@ -368,6 +369,88 @@ const ALIAS_EN={
 '🐰 兔兔':'🐰 Bunny','🦌 小鹿':'🦌 Deer','☁️ 云朵':'☁️ Cloud','🌞 小太阳':'🌞 Sunny',
 };
 function displayAlias(a){return lang==='en'&&ALIAS_EN[a]?ALIAS_EN[a]:a;}
+const ALIAS_REASON={
+'🐳 小鲸':'源远流长 · 像鲸鱼在深海里安静而辽阔',
+'🦁 狮仔':'李想念起来像 lion · 温柔又有力量',
+'😺 狮仔':'李想念起来像 lion · 温柔又有力量',
+'🐧 企鹅':'文静端庄 · 像企鹅一样可爱',
+'🦉 博士':'滢字温润 · 博士的智慧最契合',
+'🐬 海豚':'静雯聪明温柔 · 像海豚一样灵动',
+'🦦 水獭':'霈带水 · 水獭活泼又会撒娇',
+'🇬🇧 英伦喵':'在英国留学的小妹妹 · 猫一样优雅',
+'🐨 考拉':'家胥温和稳重 · 像考拉抱着树',
+'🦋 蝴蝶':'薇是花的名字 · 蝴蝶总围着花飞',
+'❄️ 小雪':'寒字有冷感 · 一片飘下来的小雪',
+'🦊 狐狸':'Tristan 名字神秘 · 像小狐狸',
+'🐰 兔兔':'馨仪温柔可爱 · 毛茸茸的兔兔',
+'🦌 小鹿':'现茹灵动 · 像林间的小鹿',
+'☁️ 云朵':'名字里有"云" · 自然就是云朵啦',
+'🌞 小太阳':'旭=朝阳 · 你像晨光一样温暖人',
+'🌸 妈妈':'妈妈是春天的花',
+'🌴 爸爸':'爸爸是一棵高大的树',
+'🌷 外婆':'外婆温柔像郁金香',
+'🍃 小姨':'小姨清新像新叶',
+'🐂 二爸':'二爸踏实勤恳',
+'🐉 大伯':'大伯德高望重像龙',
+'⭐ 周叔叔':'周叔叔是天上的一颗星',
+'🦔 黄姑爷':'姑爷有点害羞的可爱',
+'🐹 仓鼠':'子镱听起来圆软软的 · 像仓鼠',
+'🐼 胖达':'唐字有大块感 · 亮温暖 · 像憨厚熊猫',
+'🐢 龟龟':'富桓稳重踏实 · 像龟一样长寿',
+'🐝 蜜蜂':'兰花配蜜蜂 · 忠诚又勤恳',
+'🐍 小青':'玄碧像深绿 · 《白蛇传》里的小青',
+'🐌 蜗牛':'未一像还没起步 · 慢慢来的小蜗牛',
+'🦘 跳跳':'袁询活泼有冲劲 · 像袋鼠',
+'🐿 松鼠':'林杰名字带森林 · 松鼠在松林里采果子',
+'🦝 浣熊':'昭韩机灵又神秘 · 像浣熊',
+'🐶 狗子':'伟杰可靠忠诚 · 像狗狗',
+'🐱 猫咪':'雅乐优雅又快乐 · 像一只猫咪',
+'🦜 鹦鹉':'昌丽明艳热情 · 像彩色鹦鹉',
+'🦞 龙虾':'鳞是鱼鳞 · 索性给个海里的大龙虾',
+'🐺 灰狼':'嘉木森林的王 · 沉稳的狼',
+'🐵 猴子':'方抒灵动跳脱 · 像顽皮小猴子',
+'🦄 独角兽':'安琪像 angel · 独角兽是传说生物',
+'🐔 小鸡':'汝雪温柔像小鸡毛茸茸',
+'🐮 牛牛':'祝黎勤恳踏实 · 像牛',
+'🐸 青蛙':'玉是青绿色 · 像青蛙',
+'🦒 长颈':'戈高远 · 像长颈鹿看得远',
+'🐗 野猪':'丹蕾朱红色 · 野猪勇敢冲',
+'🦃 火鸡':'翔字飞得高 · 火鸡张尾羽',
+'🐯 老虎':'照腾威武 · 腾飞像猛虎',
+'🦙 羊驼':'常林安静温柔 · 像羊驼一样治愈',
+'🦥 树懒':'小敏其实灵动 · 叫树懒是反差萌',
+'🪼 水母':'浩字有水 · 水母在海里飘飘悠悠',
+'🦤 渡渡':'碧英少见独特 · 像稀有的渡渡鸟',
+'🦏 犀犀':'勃杭有冲劲 · 像犀牛冲撞',
+'🐊 鳄鱼':'瑞洲(continent)有水域感 · 鳄鱼住河边',
+'🦛 河马':'洪是水 · 河马在河里慢悠悠',
+'🐘 大象':'刚硬稳重 · 大象就是稳',
+'🐛 毛虫':'颖小巧灵动 · 像毛毛虫',
+'🐎 飞马':'程是 journey · 飞马奔驰万里',
+'🐲 小龙':'旋转的崔旋 · 像小龙游动',
+'🦀 螃蟹':'涛是浪 · 螃蟹住浪花边上',
+'🦆 鸭子':'倡导有声音 · 鸭子嘎嘎最爱叫',
+'🦩 红鹤':'淞有水 · 红鹤站在水中优雅又抢眼',
+};
+function showSurpriseBanner(text,signature){
+  let b=document.getElementById('surpriseBanner');
+  if(!b){b=document.createElement('div');b.id='surpriseBanner';b.style.cssText='position:fixed;top:30%;left:50%;transform:translate(-50%,-50%) scale(.8);z-index:2000;background:linear-gradient(135deg,#ffd47a,#ff8c00);color:#3a1d00;padding:24px 32px;border-radius:18px;font-size:18px;font-weight:600;text-align:center;max-width:80vw;line-height:1.6;box-shadow:0 14px 50px rgba(255,140,0,.4);opacity:0;transition:opacity .4s,transform .4s;pointer-events:auto;cursor:pointer';document.body.appendChild(b);}
+  b.innerHTML=text+(signature?'<div style="margin-top:12px;font-size:13px;font-weight:400;font-style:italic;opacity:.78">— '+signature+'</div>':'');
+  b.style.opacity='1';b.style.transform='translate(-50%,-50%) scale(1)';
+  b.onclick=()=>{b.style.opacity='0';b.style.transform='translate(-50%,-50%) scale(.8)';};
+  if(b._t)clearTimeout(b._t);b._t=setTimeout(b.onclick,9000);
+  fireSurpriseFireworks();
+}
+function fireSurpriseFireworks(){
+  let c=document.getElementById('fw');
+  if(!c){c=document.createElement('canvas');c.id='fw';c.style.cssText='position:fixed;top:0;left:0;pointer-events:none;z-index:1900';document.body.appendChild(c);}
+  c.style.display='block';c.width=innerWidth;c.height=innerHeight;
+  const ctx=c.getContext('2d');const ps=[];
+  function burst(x,y){const n=60,hue=Math.random()*360;for(let i=0;i<n;i++){const a=Math.PI*2*i/n,sp=2+Math.random()*4;ps.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:70+Math.random()*30,c:'hsl('+hue+',90%,62%)'});}}
+  for(let k=0;k<5;k++){setTimeout(()=>burst(innerWidth*(0.2+Math.random()*0.6),innerHeight*(0.2+Math.random()*0.4)),k*260);}
+  let frames=0;
+  (function loop(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.04;p.life--;ctx.globalAlpha=Math.max(0,p.life/90);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,2.6,0,7);ctx.fill();});const alive=ps.filter(p=>p.life>0).length;frames++;if(frames<210&&(alive||frames<150))requestAnimationFrame(loop);else{ctx.clearRect(0,0,c.width,c.height);c.style.display='none';}})();
+}
 function visitedProvinces(){const set=new Set();const cn=data.find(c=>c.id==='cn');if(cn&&cn.cities)cn.cities.forEach(ci=>{if(ci.status==='visited'&&CITY2PROV[ci.id])set.add(CITY2PROV[ci.id]);});return set;}
 function plannedProvinces(){const set=new Set();const cn=data.find(c=>c.id==='cn');if(cn&&cn.cities)cn.cities.forEach(ci=>{if((ci.status==='planned'||ci.status==='soon')&&CITY2PROV[ci.id])set.add(CITY2PROV[ci.id]);});return set;}
 let chinaGeoLayer=null;
@@ -457,7 +540,7 @@ function render(force){
         if(catSel.has(catOf(ci))&&(peopleMatch(ci)||peopleMatch(c))){
           const m=mkLayer(ci).addTo(map);
           m.bindTooltip(tip(ci,false),{sticky:true,direction:'top',className:'info'});
-          m.bindPopup(popupHtml(c,ci));
+          m.bindPopup(popupHtml(c,ci));if(ci.surprise)m.on('click',()=>showSurpriseBanner(ci.surprise));
           markers[ci.id]=m;pts.push([ci.lat,ci.lng]);
         }
       });
@@ -484,7 +567,7 @@ function render(force){
     if(c)(c.cities||[]).filter(peopleMatch).forEach(ci=>{
       const m=mkLayer(ci).addTo(map);
       m.bindTooltip(tip(ci,false),{sticky:true,direction:'top',className:'info'});
-      m.bindPopup(popupHtml(c,ci));
+      m.bindPopup(popupHtml(c,ci));if(ci.surprise)m.on('click',()=>showSurpriseBanner(ci.surprise));
       markers[ci.id]=m;
     });
     document.getElementById('hint').innerHTML=c?('<b>'+(c.flag?c.flag+' ':'')+cName(c)+'</b>'+TR('backInfo')+((c.cities&&c.cities.length)?'':' '+TR('cityTodo'))):TR('hintC');
@@ -581,7 +664,7 @@ function showHoverName(){
   }).catch(()=>{});
 }
 document.getElementById('worldBtn').onclick=()=>{viewMode='world';map.flyTo([25,30],2,{duration:.6});updateGeo();render(true);renderSide();renderPeople();renderStats();updateChipActive();};
-document.getElementById('chinaBtn').onclick=()=>{viewMode='china';map.flyTo([35,103],5,{duration:.6});updateGeo();render(true);renderSide();renderPeople();renderStats();updateChipActive();};
+document.getElementById('chinaBtn').onclick=()=>{viewMode='china';map.flyToBounds([[18,73],[53,135]],{padding:[30,30],maxZoom:5,duration:.8});updateGeo();render(true);renderSide();renderPeople();renderStats();updateChipActive();};
 function updateChipActive(){document.getElementById('worldBtn').classList.toggle('active',viewMode==='world');document.getElementById('chinaBtn').classList.toggle('active',viewMode==='china');}
 updateChipActive();
 document.getElementById('langBtn').onclick=()=>{lang=lang==='cn'?'en':'cn';applyLang();setTheme(theme);};
@@ -647,7 +730,7 @@ applyLang();
   function visits(){ if(!sb)return; sb.rpc('bump_visits').then(function(r){ if(r&&r.data!=null)$('gbVisits').textContent='👀 第 '+r.data+' 位访客'; }).catch(function(){}); }
   function loadList(){} // 留言只收集、不在网站上公开展示（可在 Supabase 后台查看）
   $('gSendBtn').onclick=function(){ if(!sb){$('gbMsgResult').textContent='未连接数据库';return;} var msg=$('gMsg').value.trim(); if(!msg){$('gbMsgResult').textContent='写点什么吧～';return;} $('gbMsgResult').textContent='发送中…'; sb.from('guestbook').insert({nickname:($('gNick').value.trim()||null),message:msg}).then(function(r){ if(r.error){$('gbMsgResult').textContent='发送失败';} else {$('gMsg').value='';$('gbMsgResult').textContent='已发送 ✅';loadList();} }); };
-  $('gGuessBtn').onclick=function(){ if(!sb)return; var name=$('gName').value.trim(); var guess=sel.value; if(!name){$('gGuessResult').textContent='先写下你的名字～';return;} $('gGuessResult').textContent='验证中…'; sb.rpc('check_guess',{p_name:name,p_guess:guess}).then(function(r){ if(r.data===true){$('gGuessResult').textContent='🎉 猜对啦！就是你！';fireworks();} else {$('gGuessResult').textContent='❌ 不是哦，再猜猜～';} }).catch(function(){$('gGuessResult').textContent='出错了';}); };
+  $('gGuessBtn').onclick=function(){ if(!sb)return; var name=$('gName').value.trim(); var guess=sel.value; if(!name){$('gGuessResult').textContent='先写下你的名字～';return;} $('gGuessResult').textContent='验证中…'; sb.rpc('check_guess',{p_name:name,p_guess:guess}).then(function(r){ if(r.data===true){$('gGuessResult').textContent='🎉 猜对啦！';fireworks();var __r=(window.ALIAS_REASON&&ALIAS_REASON[guess])||'';var __msg='你太棒啦,我们真是心有灵犀 ✨';if(__r)__msg+='<br><br><span style="font-size:15px;font-weight:500;opacity:.92">起这个名字 · '+__r+'</span>';if(window.showSurpriseBanner)showSurpriseBanner(__msg,'Claude');} else {$('gGuessResult').textContent='❌ 不是哦，再猜猜～';} }).catch(function(){$('gGuessResult').textContent='出错了';}); };
   function fireworks(){ var c=$('fw');c.style.display='block';c.width=innerWidth;c.height=innerHeight;var ctx=c.getContext('2d');var ps=[];function burst(x,y){var n=60,hue=Math.random()*360;for(var i=0;i<n;i++){var a=Math.PI*2*i/n,sp=2+Math.random()*4;ps.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:70+Math.random()*30,c:'hsl('+hue+',90%,62%)'});}}
     for(var k=0;k<5;k++){(function(k){setTimeout(function(){burst(innerWidth*(0.2+Math.random()*0.6),innerHeight*(0.2+Math.random()*0.4));},k*260);})(k);}
     var frames=0;(function loop(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=0.04;p.life--;ctx.globalAlpha=Math.max(0,p.life/90);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,2.6,0,7);ctx.fill();});ps=ps.filter(function(p){return p.life>0;});frames++;if(frames<210&&(ps.length||frames<150))requestAnimationFrame(loop);else{ctx.clearRect(0,0,c.width,c.height);c.style.display='none';}})(); }
