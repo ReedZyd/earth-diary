@@ -114,6 +114,7 @@
         <button class="chip" data-cat="🌠"></button>
         <button class="chip" data-cat="🔭"></button>
       </div>
+      <div class="secthead"><span style="font-size:12px;color:var(--muted)">📅</span><select id="yearSelEl" style="flex:1;background:var(--chipbg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:4px 6px;font-size:12px;margin-left:6px"></select></div>
       <div class="secthead"><span id="pplHead"></span><button class="mini" id="peopleAll"></button><button class="mini" id="peopleToggle"></button></div>
       <div class="legend" id="people"></div>
       <div id="sideHead"></div>
@@ -483,6 +484,10 @@ function fireSurpriseFireworks(){
 }
 function visitedProvinces(){const set=new Set();const cn=data.find(c=>c.id==='cn');if(cn&&cn.cities)cn.cities.forEach(ci=>{if(ci.status==='visited'&&CITY2PROV[ci.id])set.add(CITY2PROV[ci.id]);});return set;}
 function plannedProvinces(){const set=new Set();const cn=data.find(c=>c.id==='cn');if(cn&&cn.cities)cn.cities.forEach(ci=>{if((ci.status==='planned'||ci.status==='soon')&&CITY2PROV[ci.id])set.add(CITY2PROV[ci.id]);});return set;}
+let yearSel='all';
+function getYears(){const yrs=new Set();const re=/(19|20)\d{2}/g;function add(s){if(!s)return;(s.match(re)||[]).forEach(y=>yrs.add(y));}data.forEach(c=>{add(c.date);(c.visits||[]).forEach(v=>add(v.date));(c.cities||[]).forEach(ci=>{add(ci.date);(ci.visits||[]).forEach(v=>add(v.date));});});return [...yrs].sort();}
+function yearMatch(o){if(yearSel==='all')return true;const re=/(19|20)\d{2}/g;function hasYr(s){return s&&(s.match(re)||[]).indexOf(yearSel)>=0;}if(hasYr(o.date))return true;if((o.visits||[]).some(v=>hasYr(v.date)))return true;if((o.cities||[]).some(ci=>hasYr(ci.date)||(ci.visits||[]).some(v=>hasYr(v.date))))return true;return false;}
+function renderYearDropdown(){const el=document.getElementById('yearSelEl');if(!el)return;const yrs=getYears();const cur=yearSel;el.innerHTML='<option value="all">'+(lang==='cn'?'全部年份':'All years')+'</option>'+yrs.map(y=>'<option value="'+y+'"'+(y===cur?' selected':'')+'>'+y+'</option>').join('');el.value=cur;}
 let chinaGeoLayer=null;
 fetch('https://cdn.jsdelivr.net/gh/longwosion/geojson-map-china@master/china.json').then(r=>r.json()).then(gj=>{
   chinaGeoLayer=L.geoJSON(gj,{interactive:true,style:f=>{
@@ -549,7 +554,7 @@ window.goCountry=function(id){const c=data.find(x=>x.id===id);if(c){map.closePop
 
 function nearestCountry(){
   const ctr=map.getCenter();let best=null,bd=1e9;
-  data.filter(c=>inView(c)&&peopleMatch(c)).forEach(c=>{const dy=c.lat-ctr.lat,dx=(c.lng-ctr.lng)*Math.cos(ctr.lat*Math.PI/180);const d=dy*dy+dx*dx;if(d<bd){bd=d;best=c;}});
+  data.filter(c=>inView(c)&&yearMatch(c)&&peopleMatch(c)).forEach(c=>{const dy=c.lat-ctr.lat,dx=(c.lng-ctr.lng)*Math.cos(ctr.lat*Math.PI/180);const d=dy*dy+dx*dx;if(d<bd){bd=d;best=c;}});
   return best;
 }
 function render(force){
@@ -559,7 +564,7 @@ function render(force){
     if(curKey==='__f__'&&!force)return;
     curKey='__f__';clearMarkers();
     const pts=[];
-    data.filter(inView).forEach(c=>{
+    data.filter(c=>inView(c)&&yearMatch(c)).forEach(c=>{
       if(catSel.has(catOf(c))&&peopleMatch(c)){
         const m=mkLayer(c).addTo(map);
         m.bindTooltip(tip(c,true),{sticky:true,direction:'top',className:'info'});
@@ -583,7 +588,7 @@ function render(force){
   if(z<ZT&&viewMode!=='china'){
     if(curKey==='__c__'&&!force)return;
     curKey='__c__';clearMarkers();
-    data.filter(c=>inView(c)&&peopleMatch(c)).forEach(c=>{
+    data.filter(c=>inView(c)&&yearMatch(c)&&peopleMatch(c)).forEach(c=>{
       const m=mkLayer(c).addTo(map);
       m.bindTooltip(tip(c,true),{sticky:true,direction:'top',className:'info'});
       m.bindPopup(countryPopupHtml(c));
@@ -607,7 +612,7 @@ function render(force){
 function renderSide(){
   document.getElementById('sideHead').innerHTML='<h2>'+TR('countries')+'</h2>';
   const el=document.getElementById('list');el.innerHTML='';
-  data.filter(c=>inView(c)&&countryHasMatch(c)).slice().sort((a,b)=>(a.status>b.status?1:-1)||a.name.localeCompare(b.name)).forEach(c=>{
+  data.filter(c=>inView(c)&&yearMatch(c)&&countryHasMatch(c)).slice().sort((a,b)=>(a.status>b.status?1:-1)||a.name.localeCompare(b.name)).forEach(c=>{
     const d=document.createElement('div');d.className='row2';
     const dot=c.dive?'🤿':`<i class="dot ${c.status}"></i>`;
     d.innerHTML=`${dot}<span class="nm">${(c.flag?c.flag+' ':'')+cName(c)}</span>${c.date?'<span style="color:#9aa3b2;font-size:11px;margin-right:4px">'+esc(c.date)+'</span>':''}<button class="mini" title="toggle">⇄</button>`;
@@ -671,7 +676,7 @@ function applyLang(){
   const pt=document.getElementById('peopleToggle');pt.textContent=(document.getElementById('people').style.display==='none')?TR('show'):TR('hide');
   const lab={visited:'<i class="dot visited"></i>'+TR('visited'),soon:'<i class="dot soon"></i>'+TR('soon'),planned:'<i class="dot planned"></i>'+TR('wishlist'),'🤿':'🤿 '+TR('diving'),'🪂':'🪂 '+TR('skydiving'),'🐴':'🐴 '+TR('horse'),'🌌':'🌌 '+TR('aurora'),'🌠':'🌠 '+TR('meteor'),'🔭':'🔭 '+TR('stargazing')};
   document.querySelectorAll('#legend .chip').forEach(ch=>{ch.innerHTML=lab[ch.dataset.cat]||ch.dataset.cat;ch.classList.toggle('sel',catSel.has(ch.dataset.cat));});
-  updateAge();renderPeople();renderSide();render(true);var __sel=document.getElementById('gAlias');if(__sel)Array.from(__sel.options).forEach(o=>o.textContent=displayAlias(o.value));if(window.updateGuestbookUI)updateGuestbookUI();
+  updateAge();renderPeople();renderSide();render(true);var __sel=document.getElementById('gAlias');if(__sel)Array.from(__sel.options).forEach(o=>o.textContent=displayAlias(o.value));if(window.updateGuestbookUI)updateGuestbookUI();renderYearDropdown();
 }
 
 map.on('zoomend',()=>render());
@@ -717,6 +722,7 @@ document.getElementById('shotBtn').onclick=function(){
 };
 
 applyLang();
+var __yel=document.getElementById('yearSelEl');if(__yel)__yel.onchange=function(){yearSel=this.value;render(true);renderSide();renderPeople();renderStats();};
 (function(){var pt=document.getElementById('pokeTip');if(pt){pt.textContent=TR('poke');pt.classList.add('show');var h=function(){pt.classList.remove('show');};pt.onclick=h;setTimeout(h,5200);}})();
 </script>
 
