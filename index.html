@@ -369,6 +369,35 @@ const ALIAS_EN={
 '🐰 兔兔':'🐰 Bunny','🦌 小鹿':'🦌 Deer','☁️ 云朵':'☁️ Cloud','🌞 小太阳':'🌞 Sunny',
 };
 function displayAlias(a){return lang==='en'&&ALIAS_EN[a]?ALIAS_EN[a]:a;}
+const GB_T={
+  cn:{title:'💬 留言板 & 猜猜我是谁',guessHead:'🎭 猜猜哪个可爱头像是你',writeHead:'✍️ 留言',
+      namePh:'你的名字(真名)',reveal:'揭晓',nickPh:'昵称(可空)',msgPh:'写点什么…',send:'发送',
+      visits:n=>'👀 第 '+n+' 位访客',correct:'🎉 猜对啦！',wrong:'❌ 不是哦,再猜猜～',
+      promptName:'先写下你的名字～',noDB:'未连接数据库',writeSth:'写点什么吧～',
+      sending:'发送中…',sendFail:'发送失败',sent:'已发送 ✅',verifying:'验证中…',errored:'出错了',
+      correctMsg:'你太棒啦,我们真是心有灵犀 ✨',reasonLabel:'起这个名字 · '},
+  en:{title:'💬 Guestbook & Guess Who I Am',guessHead:'🎭 Which cute avatar is you?',writeHead:'✍️ Leave a note',
+      namePh:'Your real name',reveal:'Reveal',nickPh:'Nickname (optional)',msgPh:'Write something…',send:'Send',
+      visits:n=>'👀 Visitor #'+n,correct:'🎉 Correct!',wrong:'❌ Not quite, try again',
+      promptName:'Type your name first',noDB:'Database not connected',writeSth:'Say something first',
+      sending:'Sending…',sendFail:'Failed',sent:'Sent ✅',verifying:'Checking…',errored:'Error',
+      correctMsg:'Amazing! We really clicked ✨',reasonLabel:'Naming reason · '}
+};
+function GB(k){return GB_T[lang][k];}
+function updateGuestbookUI(){
+  const g=document.getElementById('gbCard'); if(!g) return;
+  const h3=g.querySelector('h3'); if(h3) h3.textContent=GB('title');
+  const h4s=g.querySelectorAll('h4');
+  if(h4s[0]) h4s[0].textContent=GB('guessHead');
+  if(h4s[1]) h4s[1].textContent=GB('writeHead');
+  const $=id=>document.getElementById(id);
+  if($('gName')) $('gName').placeholder=GB('namePh');
+  if($('gNick')) $('gNick').placeholder=GB('nickPh');
+  if($('gMsg')) $('gMsg').placeholder=GB('msgPh');
+  if($('gGuessBtn')) $('gGuessBtn').textContent=GB('reveal');
+  if($('gSendBtn')) $('gSendBtn').textContent=GB('send');
+  const fab=document.getElementById('gbFab'); if(fab) fab.title=(lang==='cn'?'留言 & 猜猜我是谁':'Guestbook & guess game');
+}
 const ALIAS_REASON={
 '🐳 小鲸':'源远流长 · 像鲸鱼在深海里安静而辽阔',
 '🦁 狮仔':'李想念起来像 lion · 温柔又有力量',
@@ -642,7 +671,7 @@ function applyLang(){
   const pt=document.getElementById('peopleToggle');pt.textContent=(document.getElementById('people').style.display==='none')?TR('show'):TR('hide');
   const lab={visited:'<i class="dot visited"></i>'+TR('visited'),soon:'<i class="dot soon"></i>'+TR('soon'),planned:'<i class="dot planned"></i>'+TR('wishlist'),'🤿':'🤿 '+TR('diving'),'🪂':'🪂 '+TR('skydiving'),'🐴':'🐴 '+TR('horse'),'🌌':'🌌 '+TR('aurora'),'🌠':'🌠 '+TR('meteor'),'🔭':'🔭 '+TR('stargazing')};
   document.querySelectorAll('#legend .chip').forEach(ch=>{ch.innerHTML=lab[ch.dataset.cat]||ch.dataset.cat;ch.classList.toggle('sel',catSel.has(ch.dataset.cat));});
-  updateAge();renderPeople();renderSide();render(true);var __sel=document.getElementById('gAlias');if(__sel)Array.from(__sel.options).forEach(o=>o.textContent=displayAlias(o.value));
+  updateAge();renderPeople();renderSide();render(true);var __sel=document.getElementById('gAlias');if(__sel)Array.from(__sel.options).forEach(o=>o.textContent=displayAlias(o.value));if(window.updateGuestbookUI)updateGuestbookUI();
 }
 
 map.on('zoomend',()=>render());
@@ -727,14 +756,15 @@ applyLang();
   $('gbFab').onclick=function(){$('gbModal').classList.add('show');loadList();};
   $('gbCloseBtn').onclick=function(){$('gbModal').classList.remove('show');};
   $('gbModal').onclick=function(e){if(e.target===$('gbModal'))$('gbModal').classList.remove('show');};
-  function visits(){ if(!sb)return; sb.rpc('bump_visits').then(function(r){ if(r&&r.data!=null)$('gbVisits').textContent='👀 第 '+r.data+' 位访客'; }).catch(function(){}); }
+  function visits(){ if(!sb)return; sb.rpc('bump_visits').then(function(r){ if(r&&r.data!=null)$('gbVisits').textContent=GB('visits')(r.data); }).catch(function(){}); }
   function loadList(){} // 留言只收集、不在网站上公开展示（可在 Supabase 后台查看）
-  $('gSendBtn').onclick=function(){ if(!sb){$('gbMsgResult').textContent='未连接数据库';return;} var msg=$('gMsg').value.trim(); if(!msg){$('gbMsgResult').textContent='写点什么吧～';return;} $('gbMsgResult').textContent='发送中…'; sb.from('guestbook').insert({nickname:($('gNick').value.trim()||null),message:msg}).then(function(r){ if(r.error){$('gbMsgResult').textContent='发送失败';} else {$('gMsg').value='';$('gbMsgResult').textContent='已发送 ✅';loadList();} }); };
-  $('gGuessBtn').onclick=function(){ if(!sb)return; var name=$('gName').value.trim(); var guess=sel.value; if(!name){$('gGuessResult').textContent='先写下你的名字～';return;} $('gGuessResult').textContent='验证中…'; sb.rpc('check_guess',{p_name:name,p_guess:guess}).then(function(r){ if(r.data===true){$('gGuessResult').textContent='🎉 猜对啦！';fireworks();var __r=(window.ALIAS_REASON&&ALIAS_REASON[guess])||'';var __msg='你太棒啦,我们真是心有灵犀 ✨';if(__r)__msg+='<br><br><span style="font-size:15px;font-weight:500;opacity:.92">起这个名字 · '+__r+'</span>';if(window.showSurpriseBanner)showSurpriseBanner(__msg,'Claude');} else {$('gGuessResult').textContent='❌ 不是哦，再猜猜～';} }).catch(function(){$('gGuessResult').textContent='出错了';}); };
+  $('gSendBtn').onclick=function(){ if(!sb){$('gbMsgResult').textContent=GB('noDB');return;} var msg=$('gMsg').value.trim(); if(!msg){$('gbMsgResult').textContent=GB('writeSth');return;} $('gbMsgResult').textContent=GB('sending'); sb.from('guestbook').insert({nickname:($('gNick').value.trim()||null),message:msg}).then(function(r){ if(r.error){$('gbMsgResult').textContent=GB('sendFail');} else {$('gMsg').value='';$('gbMsgResult').textContent=GB('sent');loadList();} }); };
+  $('gGuessBtn').onclick=function(){ if(!sb)return; var name=$('gName').value.trim(); var guess=sel.value; if(!name){$('gGuessResult').textContent=GB('promptName');return;} $('gGuessResult').textContent=GB('verifying'); sb.rpc('check_guess',{p_name:name,p_guess:guess}).then(function(r){ if(r.data===true){$('gGuessResult').textContent=GB('correct');fireworks();var __r=(window.ALIAS_REASON&&ALIAS_REASON[guess])||'';var __msg=GB('correctMsg');if(__r)__msg+='<br><br><span style="font-size:15px;font-weight:500;opacity:.92">'+GB('reasonLabel')+__r+'</span>';if(window.showSurpriseBanner)showSurpriseBanner(__msg,'Claude');} else {$('gGuessResult').textContent=GB('wrong');} }).catch(function(){$('gGuessResult').textContent=GB('errored');}); };
   function fireworks(){ var c=$('fw');c.style.display='block';c.width=innerWidth;c.height=innerHeight;var ctx=c.getContext('2d');var ps=[];function burst(x,y){var n=60,hue=Math.random()*360;for(var i=0;i<n;i++){var a=Math.PI*2*i/n,sp=2+Math.random()*4;ps.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:70+Math.random()*30,c:'hsl('+hue+',90%,62%)'});}}
     for(var k=0;k<5;k++){(function(k){setTimeout(function(){burst(innerWidth*(0.2+Math.random()*0.6),innerHeight*(0.2+Math.random()*0.4));},k*260);})(k);}
     var frames=0;(function loop(){ctx.clearRect(0,0,c.width,c.height);ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=0.04;p.life--;ctx.globalAlpha=Math.max(0,p.life/90);ctx.fillStyle=p.c;ctx.beginPath();ctx.arc(p.x,p.y,2.6,0,7);ctx.fill();});ps=ps.filter(function(p){return p.life>0;});frames++;if(frames<210&&(ps.length||frames<150))requestAnimationFrame(loop);else{ctx.clearRect(0,0,c.width,c.height);c.style.display='none';}})(); }
   visits();
+updateGuestbookUI();
 })();
 </script>
 </body>
