@@ -171,11 +171,11 @@ const seed=[
  {id:'pt',name:'Portugal (CoG 2025)',cn:'葡萄牙（CoG 2025）',flag:'🇵🇹',lat:39.50,lng:-8.00,status:'visited',date:'2025.08',geo:'Portugal',who:['🦁 狮仔'],cities:[
    {id:'pt1',name:'Lisbon (CoG · IST)',cn:'里斯本（CoG · IST）',lat:38.7369,lng:-9.1399,status:'visited',date:'2025.08'},
    {id:'pt2',name:'Skydiving 🪂 · Portimão',cn:'跳伞 🪂 · 波尔蒂芒',lat:37.1490,lng:-8.5377,status:'visited',act:'🪂',date:'2025.08'}]},
- {id:'uk',name:'UK',cn:'英国',flag:'🇬🇧',lat:54.00,lng:-2.00,status:'visited',date:'2024.10',geo:'United Kingdom',who:['☁️ 云朵'],cities:[
-   {id:'uk1',name:'London',cn:'伦敦',lat:51.5074,lng:-0.1278,status:'visited',date:'2024.10'},
-   {id:'uk2',name:'Edinburgh',cn:'爱丁堡',lat:55.9533,lng:-3.1883,status:'visited',date:'2024.10'},
-   {id:'uk3',name:'York',cn:'约克',lat:53.9600,lng:-1.0810,status:'visited',date:'2024.10'},
-   {id:'uk4',name:'White Cliffs of Dover',cn:'多佛白崖',lat:51.1350,lng:1.3660,status:'visited',date:'2024.10'}]},
+ {id:'uk',name:'UK',cn:'英国',flag:'🇬🇧',lat:54.00,lng:-2.00,status:'visited',date:'2024.10',geo:'United Kingdom',who:['☁️ 云朵','🌞 小太阳'],cities:[
+   {id:'uk1',name:'London',cn:'伦敦',lat:51.5074,lng:-0.1278,status:'visited',date:'2024.10',who:['☁️ 云朵']},
+   {id:'uk2',name:'Edinburgh',cn:'爱丁堡',lat:55.9533,lng:-3.1883,status:'visited',date:'2024.10',who:['☁️ 云朵','🌞 小太阳']},
+   {id:'uk3',name:'York',cn:'约克',lat:53.9600,lng:-1.0810,status:'visited',date:'2024.10',who:['☁️ 云朵']},
+   {id:'uk4',name:'White Cliffs of Dover',cn:'多佛白崖',lat:51.1350,lng:1.3660,status:'visited',date:'2024.10',who:['☁️ 云朵']}]},
  {id:'us',name:'USA',cn:'美国',flag:'🇺🇸',lat:39.00,lng:-95.00,status:'visited',date:'2023.12',geo:'United States of America',cities:[
    {id:'us1',name:'New York',cn:'纽约',lat:40.7128,lng:-74.0060,status:'visited',date:'2023.12'},
    {id:'us2',name:'Washington DC',cn:'华盛顿',lat:38.9072,lng:-77.0369,status:'visited',date:'2023.12'},
@@ -523,7 +523,7 @@ applyLang();
 (function(){
   var SB_URL='https://djooceukxlmtxxfbqeqd.supabase.co';
   var SB_KEY='sb_publishable_vF5QoGZ89A9pO0RXqRBk1Q_ZPFm4hL-';
-  var ALIASES=['🐳 小鲸','🦁 狮仔','🐧 企鹅','🦉 博士','🐬 海豚','🦦 水獭','🇬🇧 英伦喵','🐨 考拉','🦋 蝴蝶','❄️ 小雪','🦊 狐狸','🐰 兔兔','🦌 小鹿','☁️ 云朵'];
+  var ALIASES=['🐳 小鲸','🦁 狮仔','🐧 企鹅','🦉 博士','🐬 海豚','🦦 水獭','🇬🇧 英伦喵','🐨 考拉','🦋 蝴蝶','❄️ 小雪','🦊 狐狸','🐰 兔兔','🦌 小鹿','☁️ 云朵','🌞 小太阳'];
   var sb=null; try{ sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){}
   function $(id){return document.getElementById(id);}
   function esc(s){return (s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
