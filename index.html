@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root{--bg:#0f1115;--panel:#171a21;--line:#262b35;--text:#e8eaed;--muted:#9aa3b2;--green:#34c759;--blue:#3b82f6;--accent:#6ea8fe;--mapbg:#0b0d11;--chipbg:#1b212b;}
+  #pokeTip{position:fixed;left:50%;top:60px;transform:translateX(-50%) translateY(-10px);background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:10px 18px;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.28);z-index:1500;opacity:0;pointer-events:none;transition:opacity .4s ease,transform .4s ease;max-width:90vw;text-align:center;}
+  #pokeTip.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;cursor:pointer;}
   body.day{--bg:#f4f6f9;--panel:#ffffff;--line:#dde1e7;--text:#1b1f27;--muted:#5c6470;--mapbg:#e6eaef;--chipbg:#eef1f5;}
   *{box-sizing:border-box}
   html,body{margin:0;height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;background:var(--bg);color:var(--text)}
@@ -98,6 +100,7 @@
     <input type="file" id="importFile" accept="application/json" style="display:none" />
   </header>
   <div class="hint" id="hint"></div>
+  <div id="pokeTip"></div>
   <div id="main">
     <div id="map"><div id="ageCounter"></div><div id="tankBar"></div></div>
     <aside id="side">
@@ -129,19 +132,18 @@ const T={
  cn:{title:'地球存活日记',motto:'今天比昨天更自由',world:'🌍 世界',china:'🇨🇳 中国',lang:'EN',exp:'导出',imp:'导入',shot:'📷 截图',
    visited:'去过',soon:'待去',wishlist:'想去',diving:'潜水',skydiving:'跳伞',horse:'骑马',aurora:'极光',meteor:'流星雨',stargazing:'观星',
    ppl:'👥 同行（点击只看选中）',showall:'全部',hide:'收起',show:'展开',countries:'国家（点击放大进入）',
-   hintC:'把鼠标移上去，有惊喜 ✨（放大看城市，点图例 / 同行可筛选）',
+   hintC:'四处戳一戳 发现惊喜 ✨（放大看城市，点图例 / 同行可筛选）',poke:'✨ 四处戳一戳，发现惊喜！点地图、点国家、点同行都试试',
    places:'城市',big:'大货',high:'看点',season:'季节',withw:'同行',backInfo:'：悬停看详情，点地点可改。缩小回到世界视图。',cityTodo:'（城市待补充）',
    tanks:'潜水瓶',tankf:(t,c)=>'本次 '+t+' 瓶 · 离开累计 '+c+' 瓶',note:'备注',filtered:'筛选中：只显示选中的类别 / 活动（再点一次图例可取消）',
    agefmt:(y,m,d)=>'已度过 <b>'+y+'</b> 年 <b>'+m+'</b> 月 <b>'+d+'</b> 天',statsfmt:(v,s,p,dv,tk)=>`去过 <b>${v}</b> · 待去 <b>${s}</b> · 想去 <b>${p}</b> · 潜水点 <b>${dv}</b> 🤿 · 共 <b>${tk}</b> 瓶`},
  en:{title:'Survival Diary',motto:'',world:'🌍 World',china:'🇨🇳 China',lang:'中',exp:'Export',imp:'Import',shot:'📷 Screenshot',
    visited:'Visited',soon:'Upcoming',wishlist:'Wishlist',diving:'Diving',skydiving:'Skydiving',horse:'Horse riding',aurora:'Aurora',meteor:'Meteor',stargazing:'Stargazing',
    ppl:'👥 Companions (click to isolate)',showall:'Show all',hide:'Hide',show:'Show',countries:'Countries (click to zoom in)',
-   hintC:'Hover around — surprises await ✨ (zoom in for cities; filter via legend / companions)',
+   hintC:'Poke around — surprises await ✨ (zoom in for cities; filter via legend / companions)',poke:'✨ Poke around to find surprises — try the map, countries, companions',
    places:'Places',big:'Big animals',high:'Highlights',season:'Season',withw:'With',backInfo:' — hover for details, click a place to edit. Zoom out for the world view.',cityTodo:'(cities to be added)',
    tanks:'Tanks',tankf:(t,c)=>t+' this trip → '+c+' total',note:'Note',filtered:'Filtered: only selected categories / activities (click chip again to clear)',
    agefmt:(y,m,d)=>'<b>'+y+'</b>y <b>'+m+'</b>m <b>'+d+'</b>d',statsfmt:(v,s,p,dv,tk)=>`Places: visited <b>${v}</b> · upcoming <b>${s}</b> · wishlist <b>${p}</b> · dive <b>${dv}</b> 🤿 · <b>${tk}</b> tanks`}
 };
-if(IS_TOUCH){T.cn.hintC='点一下地图，有惊喜 ✨（放大看城市，点图例 / 同行可筛选）';T.en.hintC='Tap the map — surprises await ✨ (zoom in for cities; filter via legend / companions)';}
 function TR(k){return T[lang][k];}
 // name=EN, cn=中文. Countries also have flag, geo(GeoJSON name). who=同行. date. act=活动符号. tanks. tag.
 const seed=[
@@ -454,7 +456,7 @@ map.on('moveend',()=>render());
 let hoverTimer=null,hoverPop=null,lastLL=null;
 map.on('mousemove',e=>{if(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches)return;lastLL=e.latlng;if(hoverTimer)clearTimeout(hoverTimer);hoverTimer=setTimeout(showHoverName,1000);});
 map.on('mouseout',()=>{if(hoverTimer)clearTimeout(hoverTimer);if(hoverPop){map.closePopup(hoverPop);hoverPop=null;}});
-map.on('click',e=>{if(!IS_TOUCH)return;lastLL=e.latlng;if(hoverPop){map.closePopup(hoverPop);hoverPop=null;}showHoverName();});
+map.on('click',e=>{lastLL=e.latlng;if(hoverPop){map.closePopup(hoverPop);hoverPop=null;}showHoverName();});
 map.on('movestart zoomstart',()=>{if(hoverTimer)clearTimeout(hoverTimer);if(hoverPop){map.closePopup(hoverPop);hoverPop=null;}});
 function showHoverName(){
   if(!lastLL)return;const ll=lastLL;
@@ -492,6 +494,7 @@ document.getElementById('shotBtn').onclick=function(){
 };
 
 applyLang();
+(function(){var pt=document.getElementById('pokeTip');if(pt){pt.textContent=TR('poke');pt.classList.add('show');var h=function(){pt.classList.remove('show');};pt.onclick=h;setTimeout(h,5200);}})();
 </script>
 
 <button id="gbFab" title="留言 & 猜猜我是谁">💬</button>
