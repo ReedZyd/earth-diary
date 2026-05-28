@@ -130,7 +130,7 @@ const catSel=new Set(), peopleSel=new Set();
 const IS_TOUCH=!!(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches);
 let lang='cn';
 let viewMode='world';
-function inView(c){return viewMode==='china'?c.id==='cn':viewMode==='world'?c.id!=='cn':true;}
+function inView(c){return viewMode==='china'?c.id==='cn':true;}
 const T={
  cn:{title:'地球存活日记',motto:'今天比昨天更自由',world:'🌍 世界',china:'🇨🇳 中国',lang:'EN',exp:'导出',imp:'导入',shot:'📷 截图',
    visited:'去过',soon:'待去',wishlist:'想去',diving:'潜水',skydiving:'跳伞',horse:'骑马',aurora:'极光',meteor:'流星雨',stargazing:'观星',
@@ -155,31 +155,32 @@ const seed=[
    {id:'nl2',name:'Eindhoven',cn:'埃因霍温',lat:51.4416,lng:5.4697,status:'visited'}]},
  {id:'de',name:'Germany (details later)',cn:'德国（城市待补）',flag:'🇩🇪',lat:51.10,lng:10.40,status:'visited',geo:'Germany',cities:[]},
  {id:'be',name:'Belgium (details later)',cn:'比利时（城市待补）',flag:'🇧🇪',lat:50.64,lng:4.67,status:'visited',geo:'Belgium',cities:[]},
- {id:'cn',name:'China',cn:'中国',flag:'🇨🇳',lat:35.00,lng:103.00,status:'visited',geo:'China',who:['🌸 妈妈','🍓 阿镱','🌊 阿亮','🌷 外婆','🍃 小姨','🌴 爸爸','💎 阿桓','🪷 阿兰','🍀 阿碧','✨ 阿未','🎈 阿袁','🐂 二爸','🦔 阿黄','🐉 大伯','🌲 阿杰','💦 波波','⛄ 阿韩','🦅 阿伟','🎵 阿乐','🌹 阿丽','🪨 顽石','🐠 阿鳞','⭐ 阿周','🏄 浪花','😺 狮仔','🌳 阿木','📖 阿抒','🌀 风车','🎨 阿琪','🌨️ 阿汝','🌅 阿黎','💚 阿玉','💧 阿戈','🐎 飞马','🎀 阿蕾','🪁 阿翔','🔥 阿腾','⚙️ 阿浩','🎭 戏精','🐧 企鹅','🌿 阿邱','🌻 葵葵','🌟 阿敏','🦚 阿英','🚀 阿杭','🎐 阿洲'],cities:[
+ {id:'cn',name:'China',cn:'中国',flag:'🇨🇳',lat:35.00,lng:103.00,status:'visited',geo:'China',who:['🌸 妈妈','🐹 仓鼠','🐼 胖达','🌷 外婆','🍃 小姨','🌴 爸爸','🐢 龟龟','🐝 蜜蜂','🐍 小青','🐌 蜗牛','🦘 跳跳','🐂 二爸','🦔 黄姑爷','🐉 大伯','🐿 松鼠','🦛 河马','🦝 浣熊','🐶 狗子','🐱 猫咪','🦜 鹦鹉','🐘 大象','🦞 龙虾','⭐ 周叔叔','🦀 螃蟹','😺 狮仔','🐺 灰狼','🐵 猴子','🐲 小龙','🦄 独角兽','🐔 小鸡','🐮 牛牛','🐸 青蛙','🦒 长颈','🐎 飞马','🐗 野猪','🦃 火鸡','🐯 老虎','🪼 水母','🦆 鸭子','🐧 企鹅','🦙 羊驼','🐛 毛虫','🦥 树懒','🦤 渡渡','🦏 犀犀','🐊 鳄鱼'],cities:[
    {id:'cn_luz',name:'Luzhou',cn:'泸州',lat:28.8717,lng:105.4422,status:'visited',date:'1998–2015',tag:'家乡'},
-   {id:'cn_bj',name:'Beijing',cn:'北京',lat:39.9042,lng:116.4074,status:'visited',date:'2012.08 · 2018 · 2024.03–09',who:['🌸 妈妈','🍓 阿镱','🦚 阿英'],tag:'2012 转机首游颐和园 · 2024 微软'},
-   {id:'cn_tsh',name:'Tangshan',cn:'唐山',lat:39.6304,lng:118.1802,status:'visited',date:'2024.06',who:['🚀 阿杭']},
-   {id:'cn_sjz',name:'Shijiazhuang',cn:'石家庄',lat:38.0428,lng:114.5149,status:'visited',date:'2024.06',who:['🌊 阿亮','🚀 阿杭','🎐 阿洲'],tag:'朋友婚礼'},
+   {id:'cn_bj',name:'Beijing',cn:'北京',lat:39.9042,lng:116.4074,status:'visited',date:'2012.08 · 2018 · 2024.03–09',who:['🌸 妈妈','🐹 仓鼠','🦤 渡渡'],tag:'2012 转机首游颐和园 · 2024 微软'},
+   {id:'cn_tsh',name:'Tangshan',cn:'唐山',lat:39.6304,lng:118.1802,status:'visited',date:'2024.06',who:['🦏 犀犀']},
+   {id:'cn_sjz',name:'Shijiazhuang',cn:'石家庄',lat:38.0428,lng:114.5149,status:'visited',date:'2024.06',who:['🐼 胖达','🦏 犀犀','🐊 鳄鱼'],tag:'朋友婚礼'},
    {id:'cn_qd',name:'Qingdao',cn:'青岛',lat:36.0671,lng:120.3826,status:'visited',date:'2011'},
-   {id:'cn_yt',name:'Yantai',cn:'烟台',lat:37.4638,lng:121.4478,status:'visited',date:'2018',who:['🌊 阿亮']},
-   {id:'cn_ym',name:'Yangma Island',cn:'养马岛',lat:37.4520,lng:121.6900,status:'visited',date:'2018',who:['🌊 阿亮']},
+   {id:'cn_yt',name:'Yantai',cn:'烟台',lat:37.4638,lng:121.4478,status:'visited',date:'2018',who:['🐼 胖达']},
+   {id:'cn_ym',name:'Yangma Island',cn:'养马岛',lat:37.4520,lng:121.6900,status:'visited',date:'2018',who:['🐼 胖达']},
    {id:'cn_suz',name:'Suzhou',cn:'苏州',lat:31.2989,lng:120.5853,status:'visited',date:'2025.11',who:['🌸 妈妈']},
-   {id:'cn_xsbn',name:'Xishuangbanna',cn:'西双版纳',lat:22.0017,lng:100.7972,status:'visited',date:'2015',who:['🌷 外婆','🌸 妈妈','🍃 小姨','🌴 爸爸','🍓 阿镱']},
-   {id:'cn_mj',name:'Mojiang',cn:'墨江',lat:23.4338,lng:101.6925,status:'visited',date:'2015',who:['🌷 外婆','🌸 妈妈','🍃 小姨','🌴 爸爸','🍓 阿镱']},
-   {id:'cn_lj',name:'Lijiang',cn:'丽江',lat:26.8721,lng:100.2330,status:'visited',date:'2015',who:['💎 阿桓','🪷 阿兰']},
-   {id:'cn_lsh',name:'Liangshan',cn:'凉山',lat:27.8814,lng:102.2587,status:'visited',date:'2015.07',who:['🍀 阿碧','✨ 阿未','🍓 阿镱','🎈 阿袁','🐂 二爸','🦔 阿黄','🌴 爸爸','🌸 妈妈','🐉 大伯']},
-   {id:'cn_mh',name:'Mahu',cn:'马湖',lat:28.4933,lng:103.7700,status:'visited',date:'2015.07',who:['🍀 阿碧','✨ 阿未','🍓 阿镱','🎈 阿袁','🐂 二爸','🦔 阿黄','🌴 爸爸','🌸 妈妈','🐉 大伯']},
-   {id:'cn_zg',name:'Zigong',cn:'自贡',lat:29.3593,lng:104.7790,status:'visited',date:'2015.07',who:['🌲 阿杰','💦 波波','⛄ 阿韩']},
-   {id:'cn_jia',name:'Jiang An',cn:'江安',lat:28.7237,lng:105.0701,status:'visited',date:'2015.07',who:['🪷 阿兰','🦅 阿伟','💦 波波','💎 阿桓','🎵 阿乐']},
+   {id:'cn_xsbn',name:'Xishuangbanna',cn:'西双版纳',lat:22.0017,lng:100.7972,status:'visited',date:'2015'},
+   {id:'cn_mj',name:'Mojiang',cn:'墨江',lat:23.4338,lng:101.6925,status:'visited',date:'2015'},
+   {id:'cn_lj',name:'Lijiang',cn:'丽江',lat:26.8721,lng:100.2330,status:'visited',date:'2015',who:['🐢 龟龟','🐝 蜜蜂']},
+   {id:'cn_lsh',name:'Liangshan',cn:'凉山',lat:27.8814,lng:102.2587,status:'visited',date:'2015.07',who:['🐍 小青','🐌 蜗牛','🐹 仓鼠','🦘 跳跳','🐂 二爸','🦔 黄姑爷','🌴 爸爸','🌸 妈妈','🐉 大伯']},
+   {id:'cn_mh',name:'Mahu',cn:'马湖',lat:28.4933,lng:103.7700,status:'visited',date:'2015.07',who:['🐍 小青','🐌 蜗牛','🐹 仓鼠','🦘 跳跳','🐂 二爸','🦔 黄姑爷','🌴 爸爸','🌸 妈妈','🐉 大伯']},
+   {id:'cn_zg',name:'Zigong',cn:'自贡',lat:29.3593,lng:104.7790,status:'visited',date:'2015.07',who:['🐿 松鼠','🦛 河马','🦝 浣熊']},
+   {id:'cn_jia',name:'Jiang An',cn:'江安',lat:28.7237,lng:105.0701,status:'visited',date:'2015.07',who:['🐝 蜜蜂','🐶 狗子','🦛 河马','🐢 龟龟','🐱 猫咪']},
    {id:'cn_lz',name:'Langzhong',cn:'阆中',lat:31.5586,lng:105.9758,status:'visited',date:'2015.02',who:['🌴 爸爸','🌸 妈妈']},
-   {id:'cn_ts',name:'Mount Tai',cn:'泰山',lat:36.2543,lng:117.1010,status:'visited',date:'2016.05 · 2017.07 · 2017.08',who:['🌹 阿丽','🪨 顽石','🐠 阿鳞','🪷 阿兰'],tag:'18岁生日山顶提蛋糕 (2016.5.19)'},
-   {id:'cn_xf',name:'Xifeng Hot Springs',cn:'息烽温泉',lat:27.0900,lng:106.7500,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 阿周','🍓 阿镱','🌷 外婆']},
-   {id:'cn_xqk',name:'Xiaoqikong Bridge',cn:'小七孔桥',lat:25.4217,lng:107.9425,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 阿周','🍓 阿镱','🌷 外婆']},
-   {id:'cn_zhy',name:'Zhenyuan',cn:'镇远',lat:27.0497,lng:108.4286,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 阿周','🍓 阿镱','🌷 外婆']},
-   {id:'cn_cd',name:'Chengdu',cn:'成都',lat:30.5728,lng:104.0668,status:'visited',date:'多次 · 2024',who:['🌹 阿丽','🏄 浪花','🌊 阿亮','🍓 阿镱']},
-   {id:'cn_nj',name:'Nanjing',cn:'南京',lat:32.0603,lng:118.7969,status:'visited',date:'2017.10 · 另一次',who:['🌹 阿丽','🏄 浪花','🌊 阿亮'],tag:'总统府 · 夫子庙 · 莫愁湖 · 南航 · 中山广场'},
-   {id:'cn_wh',name:'Wuhan',cn:'武汉',lat:30.5928,lng:114.3055,status:'visited',who:['🌊 阿亮']},
-   {id:'cn_cq',name:'Chongqing',cn:'重庆',lat:29.5630,lng:106.5516,status:'visited',who:['🌊 阿亮']},
+   {id:'cn_jzg',name:'Jiuzhaigou',cn:'九寨沟',lat:33.2600,lng:103.9200,status:'visited',date:'2008',who:['🌴 爸爸','🌸 妈妈']},
+   {id:'cn_ts',name:'Mount Tai',cn:'泰山',lat:36.2543,lng:117.1010,status:'visited',date:'2016.05 · 2017.07 · 2017.08',who:['🦜 鹦鹉','🐘 大象','🦞 龙虾','🐝 蜜蜂'],tag:'18岁生日山顶提蛋糕 (2016.5.19)'},
+   {id:'cn_xf',name:'Xifeng Hot Springs',cn:'息烽温泉',lat:27.0900,lng:106.7500,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 周叔叔','🐹 仓鼠','🌷 外婆']},
+   {id:'cn_xqk',name:'Xiaoqikong Bridge',cn:'小七孔桥',lat:25.4217,lng:107.9425,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 周叔叔','🐹 仓鼠','🌷 外婆']},
+   {id:'cn_zhy',name:'Zhenyuan',cn:'镇远',lat:27.0497,lng:108.4286,status:'visited',date:'2014.08',who:['🌸 妈妈','🍃 小姨','🌴 爸爸','⭐ 周叔叔','🐹 仓鼠','🌷 外婆']},
+   {id:'cn_cd',name:'Chengdu',cn:'成都',lat:30.5728,lng:104.0668,status:'visited',date:'多次 · 2024',who:['🦜 鹦鹉','🦀 螃蟹','🐼 胖达','🐹 仓鼠']},
+   {id:'cn_nj',name:'Nanjing',cn:'南京',lat:32.0603,lng:118.7969,status:'visited',date:'2017.10 · 另一次',who:['🦜 鹦鹉','🦀 螃蟹','🐼 胖达'],tag:'总统府 · 夫子庙 · 莫愁湖 · 南航 · 中山广场'},
+   {id:'cn_wh',name:'Wuhan',cn:'武汉',lat:30.5928,lng:114.3055,status:'visited',date:'2018 · 另一次',who:['🐼 胖达']},
+   {id:'cn_cq',name:'Chongqing',cn:'重庆',lat:29.5630,lng:106.5516,status:'visited',who:['🐼 胖达']},
    {id:'cn_jn',name:'Jinan',cn:'济南',lat:36.6512,lng:117.1201,status:'visited',date:'2015–2022',tag:'求学时期'},
    {id:'cn_lw',name:'Laiwu',cn:'莱芜',lat:36.2143,lng:117.6764,status:'visited'},
    {id:'cn_zaz',name:'Zaozhuang',cn:'枣庄',lat:34.8108,lng:117.3236,status:'visited'},
@@ -187,20 +188,21 @@ const seed=[
    {id:'cn_sh',name:'Shanghai',cn:'上海',lat:31.2304,lng:121.4737,status:'visited',date:'2022'},
    {id:'cn_hz',name:'Hangzhou',cn:'杭州',lat:30.2741,lng:120.1551,status:'visited',date:'2022'},
    {id:'cn_gz',name:'Guangzhou',cn:'广州',lat:23.1291,lng:113.2644,status:'visited',date:'2022',tag:'办荷兰签证'},
-   {id:'cn_lan',name:'Lanzhou',cn:'兰州',lat:36.0611,lng:103.8343,status:'visited',date:'2016',who:['🌳 阿木','📖 阿抒','🌀 风车','🎨 阿琪','🌨️ 阿汝','🌅 阿黎','🏄 浪花'],tag:'💫 连心支教团'},
-   {id:'cn_by',name:'Baiyin',cn:'白银',lat:36.5447,lng:104.1382,status:'visited',date:'2016',who:['🌳 阿木','📖 阿抒','🌀 风车','🎨 阿琪','🌨️ 阿汝','🌅 阿黎','🏄 浪花'],tag:'💫 连心支教团'},
-   {id:'cn_xa',name:'Xian',cn:'西安',lat:34.3416,lng:108.9398,status:'visited',date:'2016',who:['💚 阿玉']},
-   {id:'cn_dl',name:'Dalian',cn:'大连',lat:38.9140,lng:121.6147,status:'visited',date:'2018',who:['💧 阿戈','🐎 飞马'],tag:'机器鱼比赛'},
+   {id:'cn_lan',name:'Lanzhou',cn:'兰州',lat:36.0611,lng:103.8343,status:'visited',date:'2016',who:['🐺 灰狼','🐵 猴子','🐲 小龙','🦄 独角兽','🐔 小鸡','🐮 牛牛','🦀 螃蟹'],tag:'💫 连心支教团'},
+   {id:'cn_by',name:'Baiyin',cn:'白银',lat:36.5447,lng:104.1382,status:'visited',date:'2016',who:['🐺 灰狼','🐵 猴子','🐲 小龙','🦄 独角兽','🐔 小鸡','🐮 牛牛','🦀 螃蟹'],tag:'💫 连心支教团'},
+   {id:'cn_xa',name:'Xian',cn:'西安',lat:34.3416,lng:108.9398,status:'visited',date:'2016',who:['🐸 青蛙']},
+   {id:'cn_dl',name:'Dalian',cn:'大连',lat:38.9140,lng:121.6147,status:'visited',date:'2018',who:['🦒 长颈','🐎 飞马'],tag:'机器鱼比赛'},
    {id:'cn_sy',name:'Shenyang',cn:'沈阳',lat:41.8057,lng:123.4315,status:'visited',date:'2018'},
-   {id:'cn_tj',name:'Tianjin',cn:'天津',lat:39.3434,lng:117.3616,status:'visited',date:'2017.04 · 2024.08',who:['🎀 阿蕾','🪁 阿翔','🌹 阿丽'],tag:'清明节'},
+   {id:'cn_heb',name:'Harbin',cn:'哈尔滨',lat:45.8038,lng:126.5350,status:'visited',date:'2018',who:['🐘 大象']},
+   {id:'cn_tj',name:'Tianjin',cn:'天津',lat:39.3434,lng:117.3616,status:'visited',date:'2017.04 · 2024.08',who:['🐗 野猪','🦃 火鸡','🦜 鹦鹉'],tag:'清明节'},
    {id:'cn_dh',name:'Dunhuang',cn:'敦煌',lat:40.1421,lng:94.6634,status:'visited',date:'2016.08',tag:'人生第一次 solo trip · 莫高窟 · 鸣沙山月牙泉'},
-   {id:'cn_hf',name:'Hefei',cn:'合肥',lat:31.8206,lng:117.2272,status:'visited',date:'2017.07',who:['🔥 阿腾','⚙️ 阿浩'],tag:'机器鱼比赛'},
+   {id:'cn_hf',name:'Hefei',cn:'合肥',lat:31.8206,lng:117.2272,status:'visited',date:'2017.07',who:['🐯 老虎','🪼 水母'],tag:'机器鱼比赛'},
    {id:'cn_wf',name:'Weifang',cn:'潍坊',lat:36.7068,lng:119.1611,status:'visited'},
-   {id:'cn_qh',name:'Qinghai',cn:'青海',lat:36.6232,lng:101.7800,status:'visited',who:['🎭 戏精','🐧 企鹅','🔥 阿腾','🌿 阿邱','🌳 阿木','🌻 葵葵','🌟 阿敏'],tag:'🎭 葫芦娃组合'},
+   {id:'cn_qh',name:'Qinghai',cn:'青海',lat:36.6232,lng:101.7800,status:'visited',who:['🦆 鸭子','🐧 企鹅','🐯 老虎','🦙 羊驼','🐺 灰狼','🐛 毛虫','🦥 树懒'],tag:'🎭 葫芦娃组合'},
    {id:'cn_yic',name:'Yichun',cn:'伊春',lat:47.7283,lng:128.9000,status:'visited',date:'2012.08',tag:'黑龙江'}]},
  {id:'jp',name:'Japan',cn:'日本',flag:'🇯🇵',lat:36.20,lng:138.25,status:'visited',date:'2025',geo:'Japan',who:['🦌 小鹿'],cities:[]},
- {id:'vn',name:'Vietnam',cn:'越南',flag:'🇻🇳',lat:16.00,lng:107.80,status:'visited',date:'2015',geo:'Vietnam',who:['🌷 外婆','🌸 妈妈','🍃 小姨','🌴 爸爸','🍓 阿镱'],cities:[]},
- {id:'la',name:'Laos',cn:'老挝',flag:'🇱🇦',lat:19.85,lng:102.50,status:'visited',date:'2015',geo:'Laos',who:['🌷 外婆','🌸 妈妈','🍃 小姨','🌴 爸爸','🍓 阿镱'],cities:[]},
+ {id:'vn',name:'Vietnam',cn:'越南',flag:'🇻🇳',lat:16.00,lng:107.80,status:'visited',date:'2015',geo:'Vietnam',who:['🌷 外婆','🌸 妈妈','🍃 小姨','🌴 爸爸','🐹 仓鼠'],cities:[]},
+ {id:'la',name:'Laos',cn:'老挝',flag:'🇱🇦',lat:19.85,lng:102.50,status:'visited',date:'2015',geo:'Laos',who:['🌷 外婆','🌸 妈妈','🍃 小姨','🌴 爸爸','🐹 仓鼠'],cities:[]},
  {id:'at',name:'Austria',cn:'奥地利',flag:'🇦🇹',lat:47.59,lng:14.13,status:'visited',date:'2025.08',geo:'Austria',who:['🐬 海豚'],cities:[
    {id:'at1',name:'Salzburg',cn:'萨尔茨堡',lat:47.8095,lng:13.0550,status:'visited',date:'2025.08'},
    {id:'at2',name:'St. Gilgen',cn:'圣吉尔根',lat:47.7681,lng:13.3664,status:'visited',date:'2025.08'},
@@ -455,7 +457,7 @@ function renderStats(){
   document.getElementById('stats').innerHTML=TR('statsfmt')(v,s,p,dv,TANKS.total);
   updateTankBar();
 }
-function peopleCounts(){const m={};data.filter(inView).forEach(c=>{const set=new Set([...(c.who||[])]);(c.cities||[]).forEach(ci=>(ci.who||[]).forEach(p=>set.add(p)));set.forEach(p=>m[p]=(m[p]||0)+1);});return m;}
+function peopleCounts(){const m={};data.filter(c=>viewMode==='china'?c.id==='cn':c.id!=='cn').forEach(c=>{const set=new Set([...(c.who||[])]);(c.cities||[]).forEach(ci=>(ci.who||[]).forEach(p=>set.add(p)));set.forEach(p=>m[p]=(m[p]||0)+1);});return m;}
 function renderPeople(){
   const box=document.getElementById('people');box.innerHTML='';
   const cnt=peopleCounts();
@@ -570,7 +572,7 @@ applyLang();
 (function(){
   var SB_URL='https://djooceukxlmtxxfbqeqd.supabase.co';
   var SB_KEY='sb_publishable_vF5QoGZ89A9pO0RXqRBk1Q_ZPFm4hL-';
-  var ALIASES=['🐳 小鲸','🦁 狮仔','🐧 企鹅','🦉 博士','🐬 海豚','🦦 水獭','🇬🇧 英伦喵','🐨 考拉','🦋 蝴蝶','❄️ 小雪','🦊 狐狸','🐰 兔兔','🦌 小鹿','☁️ 云朵','🌞 小太阳','🌸 妈妈','🌴 爸爸','🌷 外婆','🍃 小姨','🐂 二爸','🐉 大伯','⭐ 阿周','🦔 阿黄','🍓 阿镱','🌊 阿亮','💎 阿桓','🪷 阿兰','🍀 阿碧','✨ 阿未','🎈 阿袁','🌲 阿杰','💦 波波','⛄ 阿韩','🦅 阿伟','🎵 阿乐','🌹 阿丽','🪨 顽石','🐠 阿鳞','🏄 浪花','🌳 阿木','📖 阿抒','🌀 风车','🎨 阿琪','🌨️ 阿汝','🌅 阿黎','💚 阿玉','💧 阿戈','🐎 飞马','🎀 阿蕾','🪁 阿翔','🎭 戏精','🔥 阿腾','🌿 阿邱','🌻 葵葵','🌟 阿敏','⚙️ 阿浩','🦚 阿英','🚀 阿杭','🎐 阿洲'];
+  var ALIASES=['🐳 小鲸','🦁 狮仔','🐧 企鹅','🦉 博士','🐬 海豚','🦦 水獭','🇬🇧 英伦喵','🐨 考拉','🦋 蝴蝶','❄️ 小雪','🦊 狐狸','🐰 兔兔','🦌 小鹿','☁️ 云朵','🌞 小太阳','🌸 妈妈','🌴 爸爸','🌷 外婆','🍃 小姨','🐂 二爸','🐉 大伯','⭐ 周叔叔','🦔 黄姑爷','🐹 仓鼠','🐼 胖达','🐢 龟龟','🐝 蜜蜂','🐍 小青','🐌 蜗牛','🦘 跳跳','🐿 松鼠','🦛 河马','🦝 浣熊','🐶 狗子','🐱 猫咪','🦜 鹦鹉','🐘 大象','🦞 龙虾','🦀 螃蟹','🐺 灰狼','🐵 猴子','🐲 小龙','🦄 独角兽','🐔 小鸡','🐮 牛牛','🐸 青蛙','🦒 长颈','🐎 飞马','🐗 野猪','🦃 火鸡','🦆 鸭子','🐯 老虎','🦙 羊驼','🐛 毛虫','🦥 树懒','🪼 水母','🦤 渡渡','🦏 犀犀','🐊 鳄鱼'];
   var sb=null; try{ sb=window.supabase.createClient(SB_URL,SB_KEY); }catch(e){}
   function $(id){return document.getElementById(id);}
   function esc(s){return (s||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
